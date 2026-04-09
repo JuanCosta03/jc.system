@@ -1,0 +1,172 @@
+<div>
+    <div class="filter-bar" style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+        <select id="periodSelect" class="filter-select" style="padding: 8px 16px; border-radius: 40px; border: 1px solid #ddd;">
+            <option value="6months">Últimos 6 meses</option>
+            <option value="year">Ano atual</option>
+        </select>
+    </div>
+    <div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="card" style="background: white; border-radius: 24px; padding: 20px; text-align: center;"><h3>💰 Entradas</h3><div class="kpi-value" id="totalIn">R$ 0,00</div></div>
+        <div class="card" style="background: white; border-radius: 24px; padding: 20px; text-align: center;"><h3>📉 Saídas</h3><div class="kpi-value" id="totalOut">R$ 0,00</div></div>
+        <div class="card" style="background: white; border-radius: 24px; padding: 20px; text-align: center;"><h3>⚖️ Saldo</h3><div class="kpi-value" id="balance">R$ 0,00</div></div>
+    </div>
+    <div class="charts-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
+        <div class="card" style="background: white; border-radius: 28px; padding: 24px;"><h3>📊 Gastos por Categoria</h3><canvas id="categoryChart" height="200"></canvas></div>
+        <div class="card" style="background: white; border-radius: 28px; padding: 24px;"><h3>📈 Evolução Mensal</h3><canvas id="trendChart" height="200"></canvas></div>
+    </div>
+    <div id="adminSection" style="display: none;">
+        <div class="card" style="background: white; border-radius: 28px; padding: 24px;">
+            <h3>➕ Adicionar Transação</h3>
+            <button id="showAddBtn" class="btn-sm" style="background:#0000FF; color:white; border:none; padding:6px 14px; border-radius:30px;">Nova Transação</button>
+            <div id="addForm" style="display:none;" class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px;">
+                <input type="text" id="newName" placeholder="Nome" class="form-input" style="padding:12px; border:1px solid #ddd; border-radius:16px;">
+                <select id="newType" class="form-select"><option value="entrada">Entrada</option><option value="saida">Saída</option></select>
+                <input type="number" id="newValue" placeholder="Valor" class="form-input">
+                <input type="date" id="newDate" class="form-input">
+                <select id="newProfile" class="form-select"></select>
+                <select id="newFixo" class="form-select"><option value="fixa">Fixa</option><option value="variavel">Variável</option></select>
+                <select id="newParc" class="form-select"><option value="avista">À vista</option><option value="parcelado">Parcelado</option></select>
+                <input type="number" id="newParcelas" placeholder="Nº parcelas" class="form-input" value="1">
+                <input type="date" id="newVenc" placeholder="Vencimento" class="form-input">
+                <input type="text" id="newCat" placeholder="Categoria" class="form-input">
+                <button id="saveTransBtn" class="btn-primary" style="background:#0000FF; color:white; border:none; padding:10px 20px; border-radius:40px;">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Obter o perfil selecionado da URL (passado pelo dashboard)
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileId = urlParams.get('profile') || 'geral';
+    const currentYear = new Date().getFullYear();
+    
+    // Carregar transações do localStorage (compartilhado)
+    function getTransactions() {
+        const stored = localStorage.getItem(`transactions_${currentUser.id}`);
+        if (stored) return JSON.parse(stored);
+        // Dados padrão
+        return [
+            { id: 1, nome: "Aluguel", type: "saida", valor: 1500, data: `${currentYear}-01-01`, perfilId: "geral", perfilNome: "Geral", categoria: "Moradia", pago: true },
+            { id: 2, nome: "Salário João", type: "entrada", valor: 5200, data: `${currentYear}-01-05`, perfilId: "pai", perfilNome: "João", categoria: "Salário", pago: true },
+            { id: 3, nome: "Salário Maria", type: "entrada", valor: 3800, data: `${currentYear}-01-10`, perfilId: "mae", perfilNome: "Maria", categoria: "Salário", pago: true },
+            { id: 4, nome: "Supermercado", type: "saida", valor: 850, data: `${currentYear}-01-15`, perfilId: "mae", perfilNome: "Maria", categoria: "Alimentação", pago: true },
+            { id: 5, nome: "Escola Pedro", type: "saida", valor: 650, data: `${currentYear}-01-02`, perfilId: "filho1", perfilNome: "Pedro", categoria: "Educação", pago: true },
+        ];
+    }
+    
+    let transactions = getTransactions();
+    let currentUser = { id: 'demo' }; // Será substituído pelo auth.js global
+    
+    // Aguardar o auth.js carregar
+    if (typeof getCurrentUser !== 'undefined') {
+        currentUser = getCurrentUser();
+    }
+    
+    function getFilteredTransactions() {
+        if (profileId === 'geral') return transactions;
+        return transactions.filter(t => t.perfilId === profileId);
+    }
+    
+    function canEdit() {
+        return profileId === 'geral';
+    }
+    
+    function updateUI() {
+        let filtered = getFilteredTransactions();
+        const period = document.getElementById('periodSelect')?.value || '6months';
+        const now = new Date();
+        let startDate;
+        if (period === '6months') {
+            startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+        } else {
+            startDate = new Date(now.getFullYear(), 0, 1);
+        }
+        const filteredByPeriod = filtered.filter(t => new Date(t.data) >= startDate);
+        const totalIn = filteredByPeriod.filter(t => t.type === 'entrada').reduce((s, t) => s + t.valor, 0);
+        const totalOut = filteredByPeriod.filter(t => t.type === 'saida').reduce((s, t) => s + t.valor, 0);
+        const balance = totalIn - totalOut;
+        document.getElementById('totalIn').innerHTML = `R$ ${totalIn.toFixed(2)}`;
+        document.getElementById('totalOut').innerHTML = `R$ ${totalOut.toFixed(2)}`;
+        document.getElementById('balance').innerHTML = `R$ ${balance.toFixed(2)}`;
+        
+        // Gastos por categoria
+        const expensesByCategory = {};
+        filteredByPeriod.filter(t => t.type === 'saida').forEach(t => {
+            const cat = t.categoria || 'Outros';
+            expensesByCategory[cat] = (expensesByCategory[cat] || 0) + t.valor;
+        });
+        const ctxCat = document.getElementById('categoryChart')?.getContext('2d');
+        if (ctxCat) {
+            new Chart(ctxCat, { type: 'doughnut', data: { labels: Object.keys(expensesByCategory), datasets: [{ data: Object.values(expensesByCategory), backgroundColor: ['#0000FF', '#3366FF', '#4c9aff', '#7ab8ff', '#a3ceff'] }] } });
+        }
+        
+        // Evolução mensal (últimos 6 meses)
+        const months = [];
+        const monthlyIn = [];
+        const monthlyOut = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            months.push(d.toLocaleString('pt-BR', { month: 'short' }));
+            monthlyIn.push(0);
+            monthlyOut.push(0);
+        }
+        filteredByPeriod.forEach(t => {
+            const date = new Date(t.data);
+            const diffMonths = (now.getFullYear() - date.getFullYear()) * 12 + (now.getMonth() - date.getMonth());
+            if (diffMonths >= 0 && diffMonths < 6) {
+                const idx = 5 - diffMonths;
+                if (t.type === 'entrada') monthlyIn[idx] += t.valor;
+                else monthlyOut[idx] += t.valor;
+            }
+        });
+        const ctxTrend = document.getElementById('trendChart')?.getContext('2d');
+        if (ctxTrend) {
+            new Chart(ctxTrend, { type: 'line', data: { labels: months, datasets: [{ label: 'Entradas', data: monthlyIn, borderColor: '#2e7d32', fill: false }, { label: 'Saídas', data: monthlyOut, borderColor: '#c62828', fill: false }] } });
+        }
+        
+        // Exibir ou não o formulário de adição
+        const adminSection = document.getElementById('adminSection');
+        if (canEdit()) {
+            adminSection.style.display = 'block';
+            // Popular select de perfis
+            const profileSelect = document.getElementById('newProfile');
+            if (profileSelect) {
+                const profiles = [
+                    { id: 'geral', name: 'Geral' }, { id: 'pai', name: 'João' }, { id: 'mae', name: 'Maria' },
+                    { id: 'filho1', name: 'Pedro' }, { id: 'filho2', name: 'Lucas' }, { id: 'filho3', name: 'Ana' }
+                ];
+                profileSelect.innerHTML = profiles.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            }
+        } else {
+            adminSection.style.display = 'none';
+        }
+    }
+    
+    document.getElementById('periodSelect')?.addEventListener('change', updateUI);
+    document.getElementById('showAddBtn')?.addEventListener('click', () => {
+        document.getElementById('addForm').style.display = 'block';
+    });
+    document.getElementById('saveTransBtn')?.addEventListener('click', () => {
+        const nome = document.getElementById('newName').value;
+        const type = document.getElementById('newType').value;
+        const valor = parseFloat(document.getElementById('newValue').value);
+        const data = document.getElementById('newDate').value;
+        const perfilId = document.getElementById('newProfile').value;
+        const perfilNome = document.getElementById('newProfile').options[document.getElementById('newProfile').selectedIndex].text;
+        const fixo = document.getElementById('newFixo').value;
+        const parc = document.getElementById('newParc').value;
+        const parcelas = parseInt(document.getElementById('newParcelas').value) || 1;
+        const venc = document.getElementById('newVenc').value || data;
+        const cat = document.getElementById('newCat').value || 'Outros';
+        if (!nome || isNaN(valor) || !data) return alert('Preencha nome, valor e data');
+        const newTrans = { id: Date.now(), nome, type, valor, data, perfilId, perfilNome, fixoVariavel: fixo, parcelamento: parc, parcelas, vencimento: venc, pago: false, categoria: cat };
+        transactions.push(newTrans);
+        localStorage.setItem(`transactions_${currentUser.id}`, JSON.stringify(transactions));
+        updateUI();
+        document.getElementById('addForm').style.display = 'none';
+    });
+    
+    updateUI();
+</script>
