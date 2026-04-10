@@ -55,7 +55,7 @@
             margin: 30px auto;
             padding: 0 24px;
         }
-        /* Perfis - cards menores */
+        /* Perfis - cards menores e sem corte lateral */
         .profiles-section {
             margin-bottom: 40px;
             overflow: visible;
@@ -73,8 +73,16 @@
             gap: 20px;
             overflow-x: auto;
             overflow-y: visible;
-            padding: 10px 0 20px 0;
+            padding: 10px 0 20px 16px;  /* Espaço à esquerda para não cortar o primeiro card */
             scroll-snap-type: x mandatory;
+            margin: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #0000FF #e2e8f0;
+        }
+        /* Espaço extra no final para não cortar o último card */
+        .profiles-carousel::after {
+            content: '';
+            flex: 0 0 16px;
         }
         .profile-card {
             flex: 0 0 110px;
@@ -313,6 +321,9 @@
             .delete-profile-btn { width: 20px; height: 20px; font-size: 8px; top: -4px; right: -4px; }
             .tabs { width: 100%; justify-content: center; }
             .tab-btn { padding: 8px 16px; font-size: 14px; }
+            .profiles-carousel {
+                padding-left: 12px;
+            }
         }
     </style>
 </head>
