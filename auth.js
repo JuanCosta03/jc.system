@@ -1,17 +1,14 @@
-// auth.js - Sistema de autenticação
 const USERS_KEY = 'jcsystem_users';
 const CURRENT_USER_KEY = 'jcsystem_current_user';
 
 function initUsers() {
     let users = localStorage.getItem(USERS_KEY);
     if (!users) {
-        // Conta pessoal do Juan (familiar)
-        // Contas de teste (para simular primeiro acesso - sem dados)
         const testUsers = [
             {
                 id: '1',
                 name: 'Juan Costa',
-                email: 'jc.system@hotmil.com',
+                email: 'jc.system@hotmail.com',
                 password: 'Adm@123',
                 plan: 'familiar',
                 planPrice: '14.99',
@@ -40,16 +37,43 @@ function initUsers() {
             }
         ];
         localStorage.setItem(USERS_KEY, JSON.stringify(testUsers));
+    } else {
+        // Verificar se a conta pessoal existe com o email correto
+        let usersArray = JSON.parse(users);
+        const exists = usersArray.some(u => u.email === 'jc.system@hotmail.com');
+        if (!exists) {
+            usersArray.push({
+                id: Date.now().toString(),
+                name: 'Juan Costa',
+                email: 'jc.system@hotmail.com',
+                password: 'Adm@123',
+                plan: 'familiar',
+                planPrice: '14.99',
+                trialEndsAt: new Date(Date.now() + 30*24*60*60*1000).toISOString(),
+                hasData: false
+            });
+            localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
+        } else {
+            // Se já existe, garantir que a senha esteja correta (caso tenha sido alterada)
+            const index = usersArray.findIndex(u => u.email === 'jc.system@hotmail.com');
+            if (index !== -1 && usersArray[index].password !== 'Adm@123') {
+                usersArray[index].password = 'Adm@123';
+                localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
+            }
+        }
     }
 }
 
 function login(email, password) {
+    console.log('Tentando login:', email, password);
     const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
     const user = users.find(u => u.email === email && u.password === password);
     if (user) {
         localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+        console.log('Login bem-sucedido:', user.email);
         return user;
     }
+    console.log('Login falhou: usuário não encontrado ou senha incorreta');
     return null;
 }
 
@@ -90,7 +114,6 @@ function userHasData(userId) {
 }
 
 initUsers();
-// Exportar para uso global
 window.getCurrentUser = getCurrentUser;
 window.login = login;
 window.logout = logout;
