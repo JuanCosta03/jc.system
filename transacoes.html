@@ -40,8 +40,11 @@
 </div>
 
 <script>
+    // Obter perfil da URL (passado pelo dashboard)
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('profile') || 'geral';
+
+    // Obter usuário atual
     let currentUser = null;
     if (typeof getCurrentUser !== 'undefined') {
         currentUser = getCurrentUser();
@@ -78,6 +81,7 @@
 
     function renderTransactions() {
         let transactions = getTransactions();
+        // Filtrar pelo perfil selecionado
         if (profileId !== 'geral') {
             transactions = transactions.filter(t => t.perfilId === profileId);
         }
@@ -107,7 +111,7 @@
         adminArea.style.display = 'none';
     }
 
-    // Eventos do formulário de adicionar
+    // Eventos do formulário de adicionar (apenas se perfil Geral)
     const showAddBtn = document.getElementById('showAddFormBtn');
     const addForm = document.getElementById('addTransactionForm');
     if (showAddBtn) {
