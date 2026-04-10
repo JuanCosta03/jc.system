@@ -1,42 +1,21 @@
 <div>
-    <div id="emptyMessage" style="text-align:center; padding:60px;">
-        <i class="fas fa-chart-line" style="font-size:64px; color:#0000FF; margin-bottom:20px;"></i>
-        <h3>Nenhuma transação registrada</h3>
-        <p>Adicione transações para visualizar gráficos e estatísticas.</p>
+    <div class="filter-bar" style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+        <select id="periodSelect" style="padding: 8px 16px; border-radius: 40px; border: 1px solid #ddd;">
+            <option value="6months">Últimos 6 meses</option>
+            <option value="year">Ano atual</option>
+        </select>
     </div>
-    <div id="content" style="display:none;">
-        <div class="filter-bar" style="display:flex; justify-content:flex-end; margin-bottom:20px;">
-            <select id="periodSelect" style="padding:8px 16px; border-radius:40px; border:1px solid #ddd;">
-                <option value="6months">Últimos 6 meses</option>
-                <option value="year">Ano atual</option>
-            </select>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px; margin-bottom:30px;">
-            <div class="card" style="background:white; border-radius:24px; padding:20px; text-align:center;">
-                <h3>💰 Entradas</h3>
-                <div id="totalIn" class="kpi-value" style="font-size:32px; font-weight:800; color:#0000FF;">R$ 0,00</div>
-            </div>
-            <div class="card" style="background:white; border-radius:24px; padding:20px; text-align:center;">
-                <h3>📉 Saídas</h3>
-                <div id="totalOut" class="kpi-value" style="font-size:32px; font-weight:800; color:#0000FF;">R$ 0,00</div>
-            </div>
-            <div class="card" style="background:white; border-radius:24px; padding:20px; text-align:center;">
-                <h3>⚖️ Saldo</h3>
-                <div id="balance" class="kpi-value" style="font-size:32px; font-weight:800;">R$ 0,00</div>
-            </div>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:30px;">
-            <div class="card" style="background:white; border-radius:28px; padding:24px;">
-                <h3>📊 Gastos por Categoria</h3>
-                <canvas id="categoryChart" height="200"></canvas>
-            </div>
-            <div class="card" style="background:white; border-radius:28px; padding:24px;">
-                <h3>📈 Evolução Mensal</h3>
-                <canvas id="trendChart" height="200"></canvas>
-            </div>
-        </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="card" style="background: white; border-radius: 24px; padding: 20px; text-align: center;"><h3>💰 Entradas</h3><div id="totalIn" class="kpi-value" style="font-size:32px; font-weight:800; color:#0000FF;">R$ 0,00</div></div>
+        <div class="card" style="background: white; border-radius: 24px; padding: 20px; text-align: center;"><h3>📉 Saídas</h3><div id="totalOut" class="kpi-value" style="font-size:32px; font-weight:800; color:#0000FF;">R$ 0,00</div></div>
+        <div class="card" style="background: white; border-radius: 24px; padding: 20px; text-align: center;"><h3>⚖️ Saldo</h3><div id="balance" class="kpi-value" style="font-size:32px; font-weight:800;">R$ 0,00</div></div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
+        <div class="card" style="background: white; border-radius: 28px; padding: 24px;"><h3>📊 Gastos por Categoria</h3><canvas id="categoryChart" height="200"></canvas></div>
+        <div class="card" style="background: white; border-radius: 28px; padding: 24px;"><h3>📈 Evolução Mensal</h3><canvas id="trendChart" height="200"></canvas></div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -60,14 +39,6 @@
         if (profileId !== 'geral') {
             transactions = transactions.filter(t => t.perfilId === profileId);
         }
-        if (transactions.length === 0) {
-            document.getElementById('emptyMessage').style.display = 'block';
-            document.getElementById('content').style.display = 'none';
-            return;
-        }
-        document.getElementById('emptyMessage').style.display = 'none';
-        document.getElementById('content').style.display = 'block';
-
         const period = document.getElementById('periodSelect').value;
         const now = new Date();
         let startDate;
@@ -76,9 +47,9 @@
         } else {
             startDate = new Date(now.getFullYear(), 0, 1);
         }
-        const filtered = transactions.filter(t => new Date(t.data) >= startDate);
-        const totalIn = filtered.filter(t => t.type === 'entrada').reduce((s, t) => s + t.valor, 0);
-        const totalOut = filtered.filter(t => t.type === 'saida').reduce((s, t) => s + t.valor, 0);
+        const periodData = transactions.filter(t => new Date(t.data) >= startDate);
+        const totalIn = periodData.filter(t => t.type === 'entrada').reduce((s, t) => s + t.valor, 0);
+        const totalOut = periodData.filter(t => t.type === 'saida').reduce((s, t) => s + t.valor, 0);
         const balance = totalIn - totalOut;
         document.getElementById('totalIn').innerHTML = `R$ ${totalIn.toFixed(2)}`;
         document.getElementById('totalOut').innerHTML = `R$ ${totalOut.toFixed(2)}`;
@@ -87,7 +58,7 @@
 
         // Gastos por categoria
         const expenses = {};
-        filtered.filter(t => t.type === 'saida').forEach(t => {
+        periodData.filter(t => t.type === 'saida').forEach(t => {
             const cat = t.categoria || 'Outros';
             expenses[cat] = (expenses[cat] || 0) + t.valor;
         });
@@ -95,10 +66,7 @@
         if (ctxCat) {
             new Chart(ctxCat, {
                 type: 'doughnut',
-                data: {
-                    labels: Object.keys(expenses),
-                    datasets: [{ data: Object.values(expenses), backgroundColor: ['#0000FF', '#3366FF', '#4c9aff', '#7ab8ff', '#a3ceff'] }]
-                }
+                data: { labels: Object.keys(expenses), datasets: [{ data: Object.values(expenses), backgroundColor: ['#0000FF', '#3366FF', '#4c9aff', '#7ab8ff', '#a3ceff'] }] }
             });
         }
 
@@ -112,11 +80,11 @@
             monthlyIn.push(0);
             monthlyOut.push(0);
         }
-        filtered.forEach(t => {
+        periodData.forEach(t => {
             const date = new Date(t.data);
-            const diffMonths = (now.getFullYear() - date.getFullYear()) * 12 + (now.getMonth() - date.getMonth());
-            if (diffMonths >= 0 && diffMonths < 6) {
-                const idx = 5 - diffMonths;
+            const diff = (now.getFullYear() - date.getFullYear()) * 12 + (now.getMonth() - date.getMonth());
+            if (diff >= 0 && diff < 6) {
+                const idx = 5 - diff;
                 if (t.type === 'entrada') monthlyIn[idx] += t.valor;
                 else monthlyOut[idx] += t.valor;
             }
@@ -125,17 +93,11 @@
         if (ctxTrend) {
             new Chart(ctxTrend, {
                 type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [
-                        { label: 'Entradas', data: monthlyIn, borderColor: '#2e7d32', fill: false },
-                        { label: 'Saídas', data: monthlyOut, borderColor: '#c62828', fill: false }
-                    ]
-                }
+                data: { labels: months, datasets: [{ label: 'Entradas', data: monthlyIn, borderColor: '#2e7d32', fill: false }, { label: 'Saídas', data: monthlyOut, borderColor: '#c62828', fill: false }] }
             });
         }
     }
 
-    document.getElementById('periodSelect')?.addEventListener('change', updateUI);
+    document.getElementById('periodSelect').addEventListener('change', updateUI);
     updateUI();
 </script>
