@@ -42,7 +42,6 @@
             background: white;
             font-weight: 500;
             font-size: 16px;
-            cursor: pointer;
         }
         .legendas {
             display: flex;
@@ -135,7 +134,6 @@
     </div>
 
     <div class="calendario-tabela" id="calendarioContainer">
-        <!-- Tabela será gerada dinamicamente -->
         <div style="text-align:center; padding:40px;">Carregando calendário...</div>
     </div>
     <div class="rodape-obs">
@@ -143,19 +141,31 @@
     </div>
 
     <script>
-        // ==================== FUNÇÃO PARA OBTER USUÁRIO ====================
-        function getCurrentUser() {
+        // Função para obter usuário atual (tenta de várias formas)
+        function obterUsuario() {
+            if (typeof getCurrentUser !== 'undefined') {
+                return getCurrentUser();
+            }
             const userStr = localStorage.getItem('jcsystem_current_user');
-            return userStr ? JSON.parse(userStr) : null;
+            if (userStr) return JSON.parse(userStr);
+            return null;
         }
 
-        // ==================== FUNÇÃO PARA OBTER TRANSAÇÕES ====================
-        function getTransactions(userId) {
-            const stored = localStorage.getItem(`transactions_${userId}`);
+        const currentUser = obterUsuario();
+        if (!currentUser) {
+            // Redirecionar para login se não estiver autenticado
+            window.location.href = 'login.html';
+        }
+
+        // Obter perfil selecionado da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileId = urlParams.get('profile') || 'geral';
+
+        function getTransactions() {
+            const stored = localStorage.getItem(`transactions_${currentUser.id}`);
             return stored ? JSON.parse(stored) : [];
         }
 
-        // ==================== DETERMINAR STATUS DO DIA ====================
         function getDayStatus(transactions, dateStr, today) {
             const dayTrans = transactions.filter(t => t.vencimento === dateStr);
             if (dayTrans.length === 0) return 'gray';
@@ -179,17 +189,9 @@
             }
         }
 
-        // ==================== RENDERIZAR CALENDÁRIO ANUAL ====================
-        function renderCalendarioAnual(ano, profileId) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) {
-                document.getElementById('calendarioContainer').innerHTML = '<div style="text-align:center; padding:40px;">Usuário não autenticado. Faça login.</div>';
-                return;
-            }
-            let transactions = getTransactions(currentUser.id);
-            if (profileId !== 'geral') {
-                transactions = transactions.filter(t => t.perfilId === profileId);
-            }
+        function renderCalendarioAnual(ano) {
+            const transactions = getTransactions();
+            const filtered = profileId === 'geral' ? transactions : transactions.filter(t => t.perfilId === profileId);
             const today = new Date();
             today.setHours(0,0,0,0);
 
@@ -207,7 +209,7 @@
             for (let m = 0; m < 12; m++) {
                 html += `<th class="mes-coluna">${mesesAbrev[m]}</th>`;
             }
-            html += '<tr></thead><tbody>';
+            html += '</tr></thead><tbody>';
 
             for (let dia = 1; dia <= maxDias; dia++) {
                 html += `<tr><td style="font-weight:600; background:#f8fafc;">${dia}</td>`;
@@ -220,7 +222,7 @@
                     const mesStr = mesNum < 10 ? '0' + mesNum : '' + mesNum;
                     const diaStr = dia < 10 ? '0' + dia : '' + dia;
                     const dataStr = `${ano}-${mesStr}-${diaStr}`;
-                    const status = getDayStatus(transactions, dataStr, today);
+                    const status = getDayStatus(filtered, dataStr, today);
                     const classe = statusToClass(status);
                     html += `<td class="dia-celula"><div class="status-bolinha ${classe}"></div></td>`;
                 }
@@ -230,8 +232,7 @@
             document.getElementById('calendarioContainer').innerHTML = html;
         }
 
-        // ==================== POPULAR SELETOR DE ANOS (2015 em diante) ====================
-        function popularAnos() {
+        function preencherAnos() {
             const anoAtual = new Date().getFullYear();
             const select = document.getElementById('anoSelect');
             if (!select) return;
@@ -243,25 +244,17 @@
                 if (ano === anoAtual) option.selected = true;
                 select.appendChild(option);
             }
-            // Adicionar evento de mudança
-            select.addEventListener('change', function(e) {
+            select.addEventListener('change', (e) => {
                 const anoSelecionado = parseInt(e.target.value);
-                const profileId = obterPerfilDaUrl();
-                renderCalendarioAnual(anoSelecionado, profileId);
+                renderCalendarioAnual(anoSelecionado);
             });
-            // Renderizar com ano atual e perfil da URL
-            const profileId = obterPerfilDaUrl();
-            renderCalendarioAnual(anoAtual, profileId);
+            renderCalendarioAnual(anoAtual);
         }
 
-        // ==================== OBTER PERFIL DA URL ====================
-        function obterPerfilDaUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('profile') || 'geral';
-        }
-
-        // ==================== INICIALIZAR ====================
-        popularAnos();
+        // Aguardar o DOM carregar completamente
+        document.addEventListener('DOMContentLoaded', function() {
+            preencherAnos();
+        });
     </script>
 </body>
 </html>
