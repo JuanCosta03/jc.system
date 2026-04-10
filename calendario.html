@@ -32,9 +32,6 @@
             padding: 8px 20px;
             border-radius: 40px;
         }
-        .ano-selector label {
-            font-weight: 600;
-        }
         .ano-selector select {
             padding: 8px 16px;
             border-radius: 30px;
@@ -92,7 +89,6 @@
             height: 20px;
             border-radius: 50%;
             display: inline-block;
-            margin: 0 auto;
         }
         .sem-evento { background-color: #adb5bd; }
         .em-dia { background-color: #0000FF; }
@@ -107,14 +103,8 @@
             color: #6c757d;
         }
         @media (max-width: 768px) {
-            th, td {
-                padding: 4px 2px;
-                font-size: 10px;
-            }
-            .status-bolinha {
-                width: 14px;
-                height: 14px;
-            }
+            th, td { padding: 4px 2px; font-size: 10px; }
+            .status-bolinha { width: 14px; height: 14px; }
         }
     </style>
 </head>
@@ -132,7 +122,6 @@
             <div class="legenda-item"><div class="legenda-cor atrasado"></div><span>Atrasado</span></div>
         </div>
     </div>
-
     <div class="calendario-tabela" id="calendarioContainer">
         <div style="text-align:center; padding:40px;">Carregando calendário...</div>
     </div>
@@ -141,25 +130,22 @@
     </div>
 
     <script>
-        // Função para obter usuário atual (tenta de várias formas)
-        function obterUsuario() {
-            if (typeof getCurrentUser !== 'undefined') {
-                return getCurrentUser();
-            }
-            const userStr = localStorage.getItem('jcsystem_current_user');
-            if (userStr) return JSON.parse(userStr);
-            return null;
-        }
-
-        const currentUser = obterUsuario();
-        if (!currentUser) {
-            // Redirecionar para login se não estiver autenticado
-            window.location.href = 'login.html';
-        }
-
-        // Obter perfil selecionado da URL
+        // Obter perfil da URL
         const urlParams = new URLSearchParams(window.location.search);
         const profileId = urlParams.get('profile') || 'geral';
+
+        // Obter usuário atual
+        let currentUser = null;
+        if (typeof getCurrentUser !== 'undefined') {
+            currentUser = getCurrentUser();
+        } else {
+            const userStr = localStorage.getItem('jcsystem_current_user');
+            currentUser = userStr ? JSON.parse(userStr) : null;
+        }
+        if (!currentUser) {
+            window.location.href = 'login.html';
+            throw new Error('Usuário não autenticado');
+        }
 
         function getTransactions() {
             const stored = localStorage.getItem(`transactions_${currentUser.id}`);
@@ -191,21 +177,20 @@
 
         function renderCalendarioAnual(ano) {
             const transactions = getTransactions();
+            // Filtrar pelo perfil selecionado
             const filtered = profileId === 'geral' ? transactions : transactions.filter(t => t.perfilId === profileId);
             const today = new Date();
             today.setHours(0,0,0,0);
 
-            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
             const mesesAbrev = meses.map(m => m.substring(0,3));
-
             const diasPorMes = [];
             for (let m = 0; m < 12; m++) {
                 diasPorMes.push(new Date(ano, m+1, 0).getDate());
             }
             const maxDias = Math.max(...diasPorMes);
 
-            let html = '<table>';
-            html += '<thead><tr><th>Dia</th>';
+            let html = '<table><thead><tr><th>Dia</th>';
             for (let m = 0; m < 12; m++) {
                 html += `<th class="mes-coluna">${mesesAbrev[m]}</th>`;
             }
@@ -245,16 +230,16 @@
                 select.appendChild(option);
             }
             select.addEventListener('change', (e) => {
-                const anoSelecionado = parseInt(e.target.value);
-                renderCalendarioAnual(anoSelecionado);
+                renderCalendarioAnual(parseInt(e.target.value));
             });
             renderCalendarioAnual(anoAtual);
         }
 
-        // Aguardar o DOM carregar completamente
-        document.addEventListener('DOMContentLoaded', function() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', preencherAnos);
+        } else {
             preencherAnos();
-        });
+        }
     </script>
 </body>
 </html>
