@@ -12,13 +12,28 @@
             </select>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px; margin-bottom:30px;">
-            <div class="card"><h3>💰 Entradas</h3><div id="totalIn" class="kpi-value">R$ 0,00</div></div>
-            <div class="card"><h3>📉 Saídas</h3><div id="totalOut" class="kpi-value">R$ 0,00</div></div>
-            <div class="card"><h3>⚖️ Saldo</h3><div id="balance" class="kpi-value">R$ 0,00</div></div>
+            <div class="card" style="background:white; border-radius:24px; padding:20px; text-align:center;">
+                <h3>💰 Entradas</h3>
+                <div id="totalIn" class="kpi-value" style="font-size:32px; font-weight:800; color:#0000FF;">R$ 0,00</div>
+            </div>
+            <div class="card" style="background:white; border-radius:24px; padding:20px; text-align:center;">
+                <h3>📉 Saídas</h3>
+                <div id="totalOut" class="kpi-value" style="font-size:32px; font-weight:800; color:#0000FF;">R$ 0,00</div>
+            </div>
+            <div class="card" style="background:white; border-radius:24px; padding:20px; text-align:center;">
+                <h3>⚖️ Saldo</h3>
+                <div id="balance" class="kpi-value" style="font-size:32px; font-weight:800;">R$ 0,00</div>
+            </div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:30px;">
-            <div class="card"><h3>📊 Gastos por Categoria</h3><canvas id="categoryChart" height="200"></canvas></div>
-            <div class="card"><h3>📈 Evolução Mensal</h3><canvas id="trendChart" height="200"></canvas></div>
+            <div class="card" style="background:white; border-radius:28px; padding:24px;">
+                <h3>📊 Gastos por Categoria</h3>
+                <canvas id="categoryChart" height="200"></canvas>
+            </div>
+            <div class="card" style="background:white; border-radius:28px; padding:24px;">
+                <h3>📈 Evolução Mensal</h3>
+                <canvas id="trendChart" height="200"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -26,17 +41,25 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('profile') || 'geral';
-    let currentUser = window.getCurrentUser ? getCurrentUser() : null;
-    if (!currentUser) currentUser = JSON.parse(localStorage.getItem('jcsystem_current_user'));
-    
+    let currentUser = null;
+    if (typeof getCurrentUser !== 'undefined') {
+        currentUser = getCurrentUser();
+    } else {
+        const userStr = localStorage.getItem('jcsystem_current_user');
+        currentUser = userStr ? JSON.parse(userStr) : null;
+    }
+    if (!currentUser) window.location.href = 'login.html';
+
     function getTransactions() {
         const stored = localStorage.getItem(`transactions_${currentUser.id}`);
         return stored ? JSON.parse(stored) : [];
     }
-    
+
     function updateUI() {
         let transactions = getTransactions();
-        if (profileId !== 'geral') transactions = transactions.filter(t => t.perfilId === profileId);
+        if (profileId !== 'geral') {
+            transactions = transactions.filter(t => t.perfilId === profileId);
+        }
         if (transactions.length === 0) {
             document.getElementById('emptyMessage').style.display = 'block';
             document.getElementById('content').style.display = 'none';
@@ -44,7 +67,75 @@
         }
         document.getElementById('emptyMessage').style.display = 'none';
         document.getElementById('content').style.display = 'block';
-        // ... resto do código para calcular totais e gráficos (igual ao anterior, mas com dados reais)
+
+        const period = document.getElementById('periodSelect').value;
+        const now = new Date();
+        let startDate;
+        if (period === '6months') {
+            startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+        } else {
+            startDate = new Date(now.getFullYear(), 0, 1);
+        }
+        const filtered = transactions.filter(t => new Date(t.data) >= startDate);
+        const totalIn = filtered.filter(t => t.type === 'entrada').reduce((s, t) => s + t.valor, 0);
+        const totalOut = filtered.filter(t => t.type === 'saida').reduce((s, t) => s + t.valor, 0);
+        const balance = totalIn - totalOut;
+        document.getElementById('totalIn').innerHTML = `R$ ${totalIn.toFixed(2)}`;
+        document.getElementById('totalOut').innerHTML = `R$ ${totalOut.toFixed(2)}`;
+        document.getElementById('balance').innerHTML = `R$ ${balance.toFixed(2)}`;
+        document.getElementById('balance').style.color = balance >= 0 ? '#2e7d32' : '#c62828';
+
+        // Gastos por categoria
+        const expenses = {};
+        filtered.filter(t => t.type === 'saida').forEach(t => {
+            const cat = t.categoria || 'Outros';
+            expenses[cat] = (expenses[cat] || 0) + t.valor;
+        });
+        const ctxCat = document.getElementById('categoryChart')?.getContext('2d');
+        if (ctxCat) {
+            new Chart(ctxCat, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(expenses),
+                    datasets: [{ data: Object.values(expenses), backgroundColor: ['#0000FF', '#3366FF', '#4c9aff', '#7ab8ff', '#a3ceff'] }]
+                }
+            });
+        }
+
+        // Evolução mensal (últimos 6 meses)
+        const months = [];
+        const monthlyIn = [];
+        const monthlyOut = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            months.push(d.toLocaleString('pt-BR', { month: 'short' }));
+            monthlyIn.push(0);
+            monthlyOut.push(0);
+        }
+        filtered.forEach(t => {
+            const date = new Date(t.data);
+            const diffMonths = (now.getFullYear() - date.getFullYear()) * 12 + (now.getMonth() - date.getMonth());
+            if (diffMonths >= 0 && diffMonths < 6) {
+                const idx = 5 - diffMonths;
+                if (t.type === 'entrada') monthlyIn[idx] += t.valor;
+                else monthlyOut[idx] += t.valor;
+            }
+        });
+        const ctxTrend = document.getElementById('trendChart')?.getContext('2d');
+        if (ctxTrend) {
+            new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        { label: 'Entradas', data: monthlyIn, borderColor: '#2e7d32', fill: false },
+                        { label: 'Saídas', data: monthlyOut, borderColor: '#c62828', fill: false }
+                    ]
+                }
+            });
+        }
     }
+
+    document.getElementById('periodSelect')?.addEventListener('change', updateUI);
     updateUI();
 </script>
