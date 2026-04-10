@@ -12,13 +12,11 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             background: #f0f2f5;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #1a1a2e;
         }
-
         .dashboard-header {
             background: white;
             padding: 16px 32px;
@@ -30,7 +28,6 @@
             top: 0;
             z-index: 100;
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -39,7 +36,6 @@
             font-weight: 700;
             color: #0000FF;
         }
-
         .logout-btn {
             background: none;
             border: 1px solid #ddd;
@@ -49,23 +45,19 @@
             font-weight: 500;
             transition: all 0.2s;
         }
-
         .logout-btn:hover {
             background: #0000FF;
             color: white;
             border-color: #0000FF;
         }
-
         .dashboard-container {
             max-width: 1400px;
             margin: 30px auto;
             padding: 0 24px;
         }
-
         .profiles-section {
             margin-bottom: 40px;
         }
-
         .profiles-title {
             font-size: 20px;
             font-weight: 600;
@@ -74,7 +66,6 @@
             align-items: center;
             gap: 12px;
         }
-
         .profiles-carousel {
             display: flex;
             gap: 24px;
@@ -82,7 +73,6 @@
             padding-bottom: 16px;
             scroll-snap-type: x mandatory;
         }
-
         .profile-card {
             flex: 0 0 140px;
             text-align: center;
@@ -92,16 +82,14 @@
             scroll-snap-align: start;
             position: relative;
         }
-
         .profile-card.active {
             opacity: 1;
             transform: scale(1.05);
         }
-
         .profile-avatar {
             width: 130px;
             height: 130px;
-            border-radius: 50%;  /* Redondo */
+            border-radius: 50%;
             background: linear-gradient(145deg, #0000FF, #3366FF);
             display: flex;
             align-items: center;
@@ -115,7 +103,6 @@
             background-size: cover;
             background-position: center;
         }
-
         .edit-photo-btn {
             position: absolute;
             bottom: 8px;
@@ -133,7 +120,6 @@
             font-size: 14px;
             transition: 0.2s;
         }
-
         .delete-profile-btn {
             position: absolute;
             top: -8px;
@@ -149,30 +135,20 @@
             cursor: pointer;
             color: white;
             font-size: 12px;
-            transition: 0.2s;
             z-index: 2;
         }
-
-        .delete-profile-btn:hover {
-            background: #b71c1c;
-            transform: scale(1.1);
-        }
-
         .profile-card.active .profile-avatar {
             box-shadow: 0 0 0 4px white, 0 0 0 8px #0000FF;
         }
-
         .profile-name {
             font-weight: 600;
             font-size: 16px;
             margin-bottom: 4px;
         }
-
         .profile-role {
             font-size: 12px;
             color: #6c757d;
         }
-
         .add-profile-card {
             flex: 0 0 140px;
             text-align: center;
@@ -180,7 +156,6 @@
             transition: transform 0.2s;
             scroll-snap-align: start;
         }
-
         .add-profile-avatar {
             width: 130px;
             height: 130px;
@@ -195,19 +170,10 @@
             border: 2px dashed #cbd5e1;
             transition: 0.2s;
         }
-
         .add-profile-card:hover .add-profile-avatar {
             background: #cbd5e1;
             color: #0000FF;
         }
-
-        .add-profile-name {
-            font-weight: 500;
-            font-size: 16px;
-            color: #6c757d;
-        }
-
-        /* Tabs e conteúdo (igual antes) */
         .tabs {
             display: flex;
             gap: 8px;
@@ -217,7 +183,6 @@
             border-radius: 60px;
             width: fit-content;
         }
-
         .tab-btn {
             background: none;
             border: none;
@@ -227,12 +192,10 @@
             cursor: pointer;
             color: #4a5568;
         }
-
         .tab-btn.active {
             background: #0000FF;
             color: white;
         }
-
         .tab-content {
             background: white;
             border-radius: 28px;
@@ -240,19 +203,15 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.05);
             min-height: 500px;
         }
-
         .loading {
             text-align: center;
             padding: 60px;
             color: #6c757d;
         }
-
         .empty-state {
             text-align: center;
             padding: 60px;
         }
-
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -265,33 +224,66 @@
             justify-content: center;
             align-items: center;
         }
-
         .modal-content {
             background: white;
             border-radius: 32px;
             padding: 32px;
             max-width: 450px;
             width: 90%;
+        }
+        .modal-content h3 {
+            margin-bottom: 20px;
             text-align: center;
         }
-
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+        }
+        .photo-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .photo-options button {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .photo-options button.active {
+            background: #0000FF;
+            color: white;
+        }
         .modal-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
             margin-top: 20px;
         }
-
-        .btn-confirm {
-            background: #c62828;
+        .modal-buttons button {
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-save {
+            background: #0000FF;
             color: white;
         }
-
         .btn-cancel {
             background: #e2e8f0;
             color: #1a1a2e;
         }
-
+        .btn-confirm {
+            background: #c62828;
+            color: white;
+        }
         @media (max-width: 768px) {
             .profile-card, .add-profile-card { flex: 0 0 100px; }
             .profile-avatar, .add-profile-avatar { width: 90px; height: 90px; font-size: 40px; }
@@ -310,41 +302,59 @@
             <div class="profiles-title"><i class="fas fa-users"></i> Quem está usando?</div>
             <div class="profiles-carousel" id="profilesScroll"></div>
         </div>
-
         <div class="tabs">
             <button class="tab-btn active" data-tab="visao">Visão Geral</button>
             <button class="tab-btn" data-tab="transacoes">Transações</button>
             <button class="tab-btn" data-tab="calendario">Calendário</button>
         </div>
+        <div id="tabContent" class="tab-content"><div class="loading">Carregando...</div></div>
+    </div>
 
-        <div id="tabContent" class="tab-content">
-            <div class="loading">Carregando...</div>
+    <!-- Modal de criação/edição de perfil -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Novo Perfil</h3>
+            <input type="text" id="profileName" placeholder="Nome do perfil (ex: João)">
+            <input type="text" id="profileRole" placeholder="Papel (ex: Pai, Filho)">
+            <div class="photo-options">
+                <button id="optFile" class="active">📁 Enviar arquivo</button>
+                <button id="optUrl">🌐 URL da web</button>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+            <input type="text" id="urlInput" placeholder="https://exemplo.com/foto.jpg" style="display:none;">
+            <div class="modal-buttons">
+                <button id="saveProfileBtn" class="btn-save">Salvar</button>
+                <button id="cancelModalBtn" class="btn-cancel">Cancelar</button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal de confirmação para excluir perfil -->
+    <!-- Modal de confirmação de exclusão -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
             <h3>Excluir Perfil</h3>
             <p>Tem certeza que deseja excluir o perfil <strong id="profileToDeleteName"></strong>?</p>
-            <p style="font-size:12px; color:#c62828;">Esta ação é irreversível e todas as transações associadas a este perfil também serão removidas.</p>
+            <p style="font-size:12px; color:#c62828;">Esta ação é irreversível e todas as transações associadas também serão removidas.</p>
             <div class="modal-buttons">
-                <button id="confirmDeleteBtn" class="btn-confirm" style="padding:10px 20px; border-radius:40px; border:none;">Excluir</button>
-                <button id="cancelDeleteBtn" class="btn-cancel" style="padding:10px 20px; border-radius:40px; border:none;">Cancelar</button>
+                <button id="confirmDeleteBtn" class="btn-confirm">Excluir</button>
+                <button id="cancelDeleteBtn" class="btn-cancel">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script src="auth.js"></script>
     <script>
-        // Verificação de login
+        // ==================== VERIFICAÇÃO DE LOGIN ====================
         let currentUser = getCurrentUser();
         if (!currentUser) window.location.href = 'login.html';
 
-        // Carregar perfis
+        // ==================== DADOS ====================
         let profiles = [];
         let selectedProfileId = null;
+        let currentEditingId = null;
+        let currentPhotoMethod = 'file';
 
+        // ==================== FUNÇÕES DE PERSISTÊNCIA ====================
         function loadProfiles() {
             const stored = localStorage.getItem(`profiles_${currentUser.id}`);
             if (stored) {
@@ -364,7 +374,16 @@
             localStorage.setItem(`profiles_${currentUser.id}`, JSON.stringify(profiles));
         }
 
-        // Renderizar perfis com botão de excluir
+        function getTransactions() {
+            const stored = localStorage.getItem(`transactions_${currentUser.id}`);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveTransactions(transactions) {
+            localStorage.setItem(`transactions_${currentUser.id}`, JSON.stringify(transactions));
+        }
+
+        // ==================== RENDERIZAR PERFIS ====================
         function renderProfiles() {
             const container = document.getElementById('profilesScroll');
             if (!container) return;
@@ -391,7 +410,7 @@
             `;
             container.innerHTML = html;
 
-            // Evento de clique no perfil (selecionar)
+            // Selecionar perfil
             document.querySelectorAll('.profile-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     if (e.target.classList.contains('delete-profile-btn') || e.target.classList.contains('edit-photo-btn')) return;
@@ -401,7 +420,7 @@
                 });
             });
 
-            // Evento de excluir perfil
+            // Excluir perfil
             document.querySelectorAll('.delete-profile-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -418,75 +437,156 @@
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const profileId = btn.dataset.id;
-                    openEditPhotoModal(profileId);
+                    const profile = profiles.find(p => p.id === profileId);
+                    if (profile) openEditPhotoModal(profile);
                 });
             });
 
             // Adicionar perfil
-            const addBtn = document.getElementById('addProfileBtn');
-            if (addBtn) addBtn.addEventListener('click', () => openModal());
+            document.getElementById('addProfileBtn')?.addEventListener('click', () => openModal());
         }
 
-        // Confirmação de exclusão
-        const confirmModal = document.getElementById('confirmModal');
-        document.getElementById('confirmDeleteBtn').onclick = () => {
+        // ==================== MODAL DE CRIAÇÃO/EDIÇÃO DE PERFIL ====================
+        function openModal(profile = null) {
+            const modal = document.getElementById('profileModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const nameInput = document.getElementById('profileName');
+            const roleInput = document.getElementById('profileRole');
+            const fileInput = document.getElementById('fileInput');
+            const urlInput = document.getElementById('urlInput');
+            const optFile = document.getElementById('optFile');
+            const optUrl = document.getElementById('optUrl');
+
+            if (profile) {
+                modalTitle.innerText = 'Editar Perfil';
+                nameInput.value = profile.name;
+                roleInput.value = profile.role;
+                currentEditingId = profile.id;
+            } else {
+                modalTitle.innerText = 'Novo Perfil';
+                nameInput.value = '';
+                roleInput.value = '';
+                currentEditingId = null;
+            }
+            fileInput.value = '';
+            urlInput.value = '';
+            currentPhotoMethod = 'file';
+            optFile.classList.add('active');
+            optUrl.classList.remove('active');
+            fileInput.style.display = 'block';
+            urlInput.style.display = 'none';
+            modal.style.display = 'flex';
+        }
+
+        function openEditPhotoModal(profile) {
+            openModal(profile);
+        }
+
+        // Alternar método de foto
+        document.getElementById('optFile')?.addEventListener('click', () => {
+            currentPhotoMethod = 'file';
+            document.getElementById('optFile').classList.add('active');
+            document.getElementById('optUrl').classList.remove('active');
+            document.getElementById('fileInput').style.display = 'block';
+            document.getElementById('urlInput').style.display = 'none';
+        });
+        document.getElementById('optUrl')?.addEventListener('click', () => {
+            currentPhotoMethod = 'url';
+            document.getElementById('optUrl').classList.add('active');
+            document.getElementById('optFile').classList.remove('active');
+            document.getElementById('fileInput').style.display = 'none';
+            document.getElementById('urlInput').style.display = 'block';
+        });
+
+        // Salvar perfil (criação ou edição)
+        document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
+            const name = document.getElementById('profileName').value.trim();
+            const role = document.getElementById('profileRole').value.trim();
+            if (!name) {
+                alert('Digite um nome para o perfil');
+                return;
+            }
+            let photo = null;
+            if (currentPhotoMethod === 'file') {
+                const fileInput = document.getElementById('fileInput');
+                if (fileInput.files && fileInput.files[0]) {
+                    photo = await readFileAsDataURL(fileInput.files[0]);
+                }
+            } else {
+                const url = document.getElementById('urlInput').value.trim();
+                if (url) photo = url;
+            }
+            if (currentEditingId) {
+                const profile = profiles.find(p => p.id === currentEditingId);
+                if (profile) {
+                    profile.name = name;
+                    profile.role = role || 'Perfil';
+                    if (photo) profile.photo = photo;
+                    saveProfiles();
+                }
+            } else {
+                const colors = ['#0984e3', '#00b894', '#fdcb6e', '#e17055', '#6c5ce7', '#e84393', '#2c3e66'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                const emojis = ['😊', '😎', '🧑', '👩', '👨', '👧', '👦', '🐶', '🐱'];
+                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                profiles.push({
+                    id: Date.now().toString(),
+                    name: name,
+                    role: role || 'Perfil',
+                    emoji: randomEmoji,
+                    color: randomColor,
+                    photo: photo || null
+                });
+                saveProfiles();
+            }
+            document.getElementById('profileModal').style.display = 'none';
+            renderProfiles();
+            if (profiles.length === 1) {
+                selectedProfileId = profiles[0].id;
+                loadCurrentTab();
+            }
+        });
+
+        document.getElementById('cancelModalBtn')?.addEventListener('click', () => {
+            document.getElementById('profileModal').style.display = 'none';
+        });
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ==================== MODAL DE EXCLUSÃO ====================
+        document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
             const profileId = window.pendingDeleteId;
             if (profileId) {
-                // Remover perfil
                 profiles = profiles.filter(p => p.id !== profileId);
                 saveProfiles();
-                // Remover transações associadas a este perfil
                 let transactions = getTransactions();
                 transactions = transactions.filter(t => t.perfilId !== profileId);
                 saveTransactions(transactions);
-                // Se o perfil excluído era o selecionado, selecionar outro
                 if (selectedProfileId === profileId) {
                     selectedProfileId = profiles.length > 0 ? profiles[0].id : null;
                 }
                 renderProfiles();
                 loadCurrentTab();
             }
-            confirmModal.style.display = 'none';
-        };
-        document.getElementById('cancelDeleteBtn').onclick = () => {
-            confirmModal.style.display = 'none';
-        };
+            document.getElementById('confirmModal').style.display = 'none';
+        });
+        document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+            document.getElementById('confirmModal').style.display = 'none';
+        });
         window.onclick = (event) => {
+            const confirmModal = document.getElementById('confirmModal');
+            const profileModal = document.getElementById('profileModal');
             if (event.target === confirmModal) confirmModal.style.display = 'none';
+            if (event.target === profileModal) profileModal.style.display = 'none';
         };
 
-        // Funções para transações (auxiliares)
-        function getTransactions() {
-            const stored = localStorage.getItem(`transactions_${currentUser.id}`);
-            return stored ? JSON.parse(stored) : [];
-        }
-        function saveTransactions(transactions) {
-            localStorage.setItem(`transactions_${currentUser.id}`, JSON.stringify(transactions));
-        }
-
-        // Modal de criação/edição de perfil (já existente, manter igual ao anterior)
-        // ... (código do modal de criação/edição - não vou repetir para economizar, mas deve ser mantido)
-        // Nota: no código final, inclua todo o modal e funções de edição/foto como antes.
-
-        // Para não quebrar, vou incluir as funções essenciais de criação de perfil e edição de foto (resumidas)
-        function openModal(profile = null) {
-            // Implementar modal de criação/edição (similar ao que já tínhamos)
-            // Aqui vou apenas alertar para não quebrar, mas você deve integrar o modal completo.
-            alert('Função de criar/editar perfil está presente no código completo. Substitua pelo modal completo.');
-        }
-        function openEditPhotoModal(profileId) {
-            const profile = profiles.find(p => p.id === profileId);
-            if (profile) {
-                const url = prompt('Digite a URL da foto (deixe em branco para remover):');
-                if (url !== null) {
-                    profile.photo = url.trim() || null;
-                    saveProfiles();
-                    renderProfiles();
-                }
-            }
-        }
-
-        // Carregar conteúdo das abas (fetch) - igual ao anterior
+        // ==================== CARREGAR ABAS (VISÃO GERAL, TRANSAÇÕES, CALENDÁRIO) ====================
         async function loadTabContent(tabId) {
             const contentDiv = document.getElementById('tabContent');
             contentDiv.innerHTML = '<div class="loading">Carregando...</div>';
@@ -495,7 +595,7 @@
             else if (tabId === 'transacoes') url = 'transacoes.html';
             else if (tabId === 'calendario') url = 'calendario.html';
             try {
-                const response = await fetch(`${url}?profile=${selectedProfileId}&_=${Date.now()}`);
+                const response = await fetch(`${url}?profile=${selectedProfileId || ''}&_=${Date.now()}`);
                 if (!response.ok) throw new Error('HTTP ' + response.status);
                 const html = await response.text();
                 contentDiv.innerHTML = html;
@@ -507,7 +607,17 @@
                     oldScript.remove();
                 });
             } catch (error) {
-                contentDiv.innerHTML = '<div class="loading">Erro ao carregar. Verifique os arquivos.</div>';
+                if (profiles.length === 0) {
+                    contentDiv.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-plus" style="font-size:48px; color:#0000FF;"></i>
+                            <h3>Bem-vindo ao JCSystem!</h3>
+                            <p>Para começar, clique em "Adicionar Perfil" e crie o primeiro perfil da sua família.</p>
+                        </div>
+                    `;
+                } else {
+                    contentDiv.innerHTML = '<div class="loading">Erro ao carregar. Verifique os arquivos: visao-geral.html, transacoes.html, calendario.html</div>';
+                }
             }
         }
 
@@ -516,6 +626,7 @@
             loadTabContent(activeTab);
         }
 
+        // ==================== EVENTOS DAS ABAS ====================
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -524,12 +635,18 @@
             });
         });
 
-        document.getElementById('logoutBtn').onclick = () => { logout(); window.location.href = 'index.html'; };
+        // ==================== LOGOUT ====================
+        document.getElementById('logoutBtn').onclick = () => {
+            logout();
+            window.location.href = 'index.html';
+        };
 
+        // ==================== INICIALIZAÇÃO ====================
         loadProfiles();
         renderProfiles();
-        if (profiles.length > 0) loadCurrentTab();
-        else {
+        if (profiles.length > 0) {
+            loadCurrentTab();
+        } else {
             document.getElementById('tabContent').innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-user-plus" style="font-size:48px; color:#0000FF;"></i>
