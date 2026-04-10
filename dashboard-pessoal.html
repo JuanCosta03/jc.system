@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JCSystem | Área Familiar</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos do dashboard */
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; margin: 0; }
+        .dashboard-header { background: white; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; color: #0000FF; }
+        .logout-btn { background: none; border: 1px solid #ddd; padding: 8px 20px; border-radius: 40px; cursor: pointer; }
+        .dashboard-container { max-width: 1400px; margin: 30px auto; padding: 0 24px; }
+        .profiles-carousel { background: white; border-radius: 24px; padding: 24px; margin-bottom: 32px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+        .profiles-scroll { display: flex; gap: 20px; overflow-x: auto; }
+        .profile-card { flex: 0 0 100px; text-align: center; cursor: pointer; opacity: 0.7; transition: 0.2s; }
+        .profile-card.active { opacity: 1; transform: scale(1.05); }
+        .profile-avatar { width: 80px; height: 80px; background: linear-gradient(135deg, #0000FF, #3366FF); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: white; font-size: 32px; }
+        .profile-card.active .profile-avatar { box-shadow: 0 0 0 3px white, 0 0 0 6px #0000FF; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 24px; background: white; padding: 8px 16px; border-radius: 60px; width: fit-content; }
+        .tab-btn { background: none; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .tab-btn.active { background: #0000FF; color: white; }
+        .tab-content { background: white; border-radius: 28px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+        .loading { text-align: center; padding: 40px; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="logo"><i class="fas fa-cube"></i> JCSystem Familiar</div>
+        <button id="logoutBtn" class="logout-btn">Sair</button>
+    </div>
+    <div class="dashboard-container">
+        <div class="profiles-carousel">
+            <div class="profiles-scroll" id="profilesScroll"></div>
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="visao">Visão Geral</button>
+            <button class="tab-btn" data-tab="transacoes">Transações</button>
+            <button class="tab-btn" data-tab="calendario">Calendário</button>
+        </div>
+        <div id="tabContent" class="tab-content">
+            <!-- Conteúdo carregado dinamicamente -->
+            <div class="loading">Carregando...</div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        let currentUser = getCurrentUser();
+        if (!currentUser) window.location.href = 'login.html';
+
+        // Perfis
+        const profiles = [
+            { id: 'geral', name: 'Geral', role: 'Administrador', icon: '👑', color: '#0000FF' },
+            { id: 'pai', name: 'João', role: 'Pai', icon: '👨', color: '#2c3e66' },
+            { id: 'mae', name: 'Maria', role: 'Mãe', icon: '👩', color: '#e84393' },
+            { id: 'filho1', name: 'Pedro', role: 'Filho (16)', icon: '🧑', color: '#0984e3' },
+            { id: 'filho2', name: 'Lucas', role: 'Filho (12)', icon: '👦', color: '#00b894' },
+            { id: 'filho3', name: 'Ana', role: 'Filha (8)', icon: '👧', color: '#fdcb6e' }
+        ];
+        let selectedProfileId = 'geral';
+
+        function renderProfiles() {
+            const container = document.getElementById('profilesScroll');
+            container.innerHTML = profiles.map(p => `
+                <div class="profile-card ${selectedProfileId === p.id ? 'active' : ''}" data-id="${p.id}">
+                    <div class="profile-avatar" style="background: linear-gradient(135deg, ${p.color}, ${p.color}aa);">${p.icon}</div>
+                    <div class="profile-name">${p.name}</div>
+                    <div class="profile-role">${p.role}</div>
+                </div>
+            `).join('');
+            document.querySelectorAll('.profile-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    selectedProfileId = card.dataset.id;
+                    renderProfiles();
+                    loadCurrentTab();
+                });
+            });
+        }
+
+        async function loadTabContent(tabId) {
+            const contentDiv = document.getElementById('tabContent');
+            contentDiv.innerHTML = '<div class="loading">Carregando...</div>';
+            let url = '';
+            if (tabId === 'visao') url = 'visao-geral.html';
+            else if (tabId === 'transacoes') url = 'transacoes.html';
+            else if (tabId === 'calendario') url = 'calendario.html';
+            
+            try {
+                const response = await fetch(url + '?profile=' + selectedProfileId + '&_=' + Date.now());
+                const html = await response.text();
+                contentDiv.innerHTML = html;
+                // Executar scripts do conteúdo carregado
+                const scripts = contentDiv.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = oldScript.textContent;
+                    document.body.appendChild(newScript);
+                });
+            } catch (error) {
+                contentDiv.innerHTML = '<div class="loading">Erro ao carregar conteúdo. Verifique se os arquivos existem.</div>';
+            }
+        }
+
+        function loadCurrentTab() {
+            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+            loadTabContent(activeTab);
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                loadCurrentTab();
+            });
+        });
+
+        renderProfiles();
+        loadCurrentTab();
+
+        document.getElementById('logoutBtn').onclick = () => { logout(); window.location.href = 'index.html'; };
+    </script>
+</body>
+</html>

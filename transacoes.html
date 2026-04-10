@@ -1,0 +1,41 @@
+<div>
+    <h3>📋 Histórico de Transações</h3>
+    <table style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 1px solid #ddd;">
+                <th style="text-align:left; padding:12px;">Data</th><th>Nome</th><th>Perfil</th><th>Valor</th><th>Tipo</th><th>Categoria</th>
+            </tr>
+        </thead>
+        <tbody id="transactionsTableBody">
+            <tr><td colspan="6" style="text-align:center;">Carregando...</td></tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileId = urlParams.get('profile') || 'geral';
+    let currentUser = { id: 'demo' };
+    if (typeof getCurrentUser !== 'undefined') currentUser = getCurrentUser();
+    
+    function loadTransactions() {
+        const stored = localStorage.getItem(`transactions_${currentUser.id}`);
+        let transactions = stored ? JSON.parse(stored) : [];
+        if (profileId !== 'geral') transactions = transactions.filter(t => t.perfilId === profileId);
+        const tbody = document.getElementById('transactionsTableBody');
+        if (transactions.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6">Nenhuma transação encontrada</td></tr>';
+            return;
+        }
+        tbody.innerHTML = transactions.map(t => `
+            <tr style="border-bottom:1px solid #eee;">
+                <td style="padding:12px;">${t.data}</td>
+                <td><strong>${t.nome}</strong></td>
+                <td>${t.perfilNome}</td>
+                <td style="color:${t.type==='entrada'?'green':'red'}">R$ ${t.valor.toFixed(2)}</td>
+                <td><span class="${t.type==='entrada'?'badge-income':'badge-expense'}" style="background:${t.type==='entrada'?'#e6f7e6':'#fee'}; padding:4px 10px; border-radius:20px;">${t.type==='entrada'?'Receita':'Despesa'}</span></td>
+                <td>${t.categoria || '-'}</td>
+            </tr>
+        `).join('');
+    }
+    loadTransactions();
+</script>
