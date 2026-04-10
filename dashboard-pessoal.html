@@ -2,28 +2,221 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>JCSystem | Área Familiar</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Estilos específicos do dashboard */
-        body { background: #f0f2f5; font-family: 'Inter', sans-serif; margin: 0; }
-        .dashboard-header { background: white; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .logo { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; color: #0000FF; }
-        .logout-btn { background: none; border: 1px solid #ddd; padding: 8px 20px; border-radius: 40px; cursor: pointer; }
-        .dashboard-container { max-width: 1400px; margin: 30px auto; padding: 0 24px; }
-        .profiles-carousel { background: white; border-radius: 24px; padding: 24px; margin-bottom: 32px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
-        .profiles-scroll { display: flex; gap: 20px; overflow-x: auto; }
-        .profile-card { flex: 0 0 100px; text-align: center; cursor: pointer; opacity: 0.7; transition: 0.2s; }
-        .profile-card.active { opacity: 1; transform: scale(1.05); }
-        .profile-avatar { width: 80px; height: 80px; background: linear-gradient(135deg, #0000FF, #3366FF); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: white; font-size: 32px; }
-        .profile-card.active .profile-avatar { box-shadow: 0 0 0 3px white, 0 0 0 6px #0000FF; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 24px; background: white; padding: 8px 16px; border-radius: 60px; width: fit-content; }
-        .tab-btn { background: none; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
-        .tab-btn.active { background: #0000FF; color: white; }
-        .tab-content { background: white; border-radius: 28px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
-        .loading { text-align: center; padding: 40px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f2f5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #1a1a2e;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0000FF;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #0000FF;
+            color: white;
+            border-color: #0000FF;
+        }
+
+        /* Container principal */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 24px;
+        }
+
+        /* Seção de perfis estilo Netflix */
+        .profiles-section {
+            margin-bottom: 40px;
+        }
+
+        .profiles-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profiles-title i {
+            color: #0000FF;
+            font-size: 24px;
+        }
+
+        .profiles-carousel {
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            padding-bottom: 16px;
+            scroll-snap-type: x mandatory;
+        }
+
+        .profiles-carousel::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .profiles-carousel::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .profiles-carousel::-webkit-scrollbar-thumb {
+            background: #0000FF;
+            border-radius: 10px;
+        }
+
+        .profile-card-netflix {
+            flex: 0 0 140px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            opacity: 0.8;
+            scroll-snap-align: start;
+        }
+
+        .profile-card-netflix.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .profile-avatar-netflix {
+            width: 130px;
+            height: 130px;
+            background: linear-gradient(145deg, #0000FF, #3366FF);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            color: white;
+            font-size: 56px;
+            font-weight: 500;
+            box-shadow: 0 10px 20px rgba(0,0,255,0.2);
+            transition: box-shadow 0.2s;
+        }
+
+        .profile-card-netflix.active .profile-avatar-netflix {
+            box-shadow: 0 0 0 4px white, 0 0 0 8px #0000FF;
+        }
+
+        .profile-name-netflix {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .profile-role-netflix {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 60px;
+            width: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4a5568;
+        }
+
+        .tab-btn.active {
+            background: #0000FF;
+            color: white;
+        }
+
+        /* Conteúdo da aba */
+        .tab-content {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            min-height: 500px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0 16px;
+            }
+            .profile-card-netflix {
+                flex: 0 0 100px;
+            }
+            .profile-avatar-netflix {
+                width: 90px;
+                height: 90px;
+                font-size: 40px;
+            }
+            .tabs {
+                width: 100%;
+                justify-content: center;
+            }
+            .tab-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -32,75 +225,96 @@
         <button id="logoutBtn" class="logout-btn">Sair</button>
     </div>
     <div class="dashboard-container">
-        <div class="profiles-carousel">
-            <div class="profiles-scroll" id="profilesScroll"></div>
+        <!-- Seção de perfis estilo Netflix -->
+        <div class="profiles-section">
+            <div class="profiles-title">
+                <i class="fas fa-users"></i> Quem está usando?
+            </div>
+            <div class="profiles-carousel" id="profilesScroll"></div>
         </div>
+
+        <!-- Tabs -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="visao">Visão Geral</button>
             <button class="tab-btn" data-tab="transacoes">Transações</button>
             <button class="tab-btn" data-tab="calendario">Calendário</button>
         </div>
+
+        <!-- Conteúdo dinâmico -->
         <div id="tabContent" class="tab-content">
-            <!-- Conteúdo carregado dinamicamente -->
             <div class="loading">Carregando...</div>
         </div>
     </div>
 
     <script src="auth.js"></script>
     <script>
+        // ==================== VERIFICAÇÃO DE LOGIN ====================
         let currentUser = getCurrentUser();
         if (!currentUser) window.location.href = 'login.html';
 
-        // Perfis
+        // ==================== PERFIS ====================
         const profiles = [
-            { id: 'geral', name: 'Geral', role: 'Administrador', icon: '👑', color: '#0000FF' },
-            { id: 'pai', name: 'João', role: 'Pai', icon: '👨', color: '#2c3e66' },
-            { id: 'mae', name: 'Maria', role: 'Mãe', icon: '👩', color: '#e84393' },
-            { id: 'filho1', name: 'Pedro', role: 'Filho (16)', icon: '🧑', color: '#0984e3' },
-            { id: 'filho2', name: 'Lucas', role: 'Filho (12)', icon: '👦', color: '#00b894' },
-            { id: 'filho3', name: 'Ana', role: 'Filha (8)', icon: '👧', color: '#fdcb6e' }
+            { id: 'geral', name: 'Geral', role: 'Administrador', icon: '👑', color: '#0000FF', emoji: '👑' },
+            { id: 'pai', name: 'João', role: 'Pai', icon: '👨', color: '#2c3e66', emoji: '👨' },
+            { id: 'mae', name: 'Maria', role: 'Mãe', icon: '👩', color: '#e84393', emoji: '👩' },
+            { id: 'filho1', name: 'Pedro', role: 'Filho (16)', icon: '🧑', color: '#0984e3', emoji: '🧑' },
+            { id: 'filho2', name: 'Lucas', role: 'Filho (12)', icon: '👦', color: '#00b894', emoji: '👦' },
+            { id: 'filho3', name: 'Ana', role: 'Filha (8)', icon: '👧', color: '#fdcb6e', emoji: '👧' }
         ];
+
         let selectedProfileId = 'geral';
 
+        // Renderiza os cards de perfil estilo Netflix
         function renderProfiles() {
             const container = document.getElementById('profilesScroll');
             container.innerHTML = profiles.map(p => `
-                <div class="profile-card ${selectedProfileId === p.id ? 'active' : ''}" data-id="${p.id}">
-                    <div class="profile-avatar" style="background: linear-gradient(135deg, ${p.color}, ${p.color}aa);">${p.icon}</div>
-                    <div class="profile-name">${p.name}</div>
-                    <div class="profile-role">${p.role}</div>
+                <div class="profile-card-netflix ${selectedProfileId === p.id ? 'active' : ''}" data-id="${p.id}">
+                    <div class="profile-avatar-netflix" style="background: linear-gradient(145deg, ${p.color}, ${p.color}cc);">
+                        ${p.emoji}
+                    </div>
+                    <div class="profile-name-netflix">${p.name}</div>
+                    <div class="profile-role-netflix">${p.role}</div>
                 </div>
             `).join('');
-            document.querySelectorAll('.profile-card').forEach(card => {
+
+            // Adiciona evento de clique
+            document.querySelectorAll('.profile-card-netflix').forEach(card => {
                 card.addEventListener('click', () => {
                     selectedProfileId = card.dataset.id;
                     renderProfiles();
-                    loadCurrentTab();
+                    loadCurrentTab(); // recarrega o conteúdo da aba ativa com o novo perfil
                 });
             });
         }
 
+        // ==================== CARREGAR CONTEÚDO DAS ABAS ====================
         async function loadTabContent(tabId) {
             const contentDiv = document.getElementById('tabContent');
             contentDiv.innerHTML = '<div class="loading">Carregando...</div>';
+
             let url = '';
             if (tabId === 'visao') url = 'visao-geral.html';
             else if (tabId === 'transacoes') url = 'transacoes.html';
             else if (tabId === 'calendario') url = 'calendario.html';
-            
+
             try {
-                const response = await fetch(url + '?profile=' + selectedProfileId + '&_=' + Date.now());
+                // Adiciona parâmetro profile e timestamp para evitar cache
+                const response = await fetch(`${url}?profile=${selectedProfileId}&_=${Date.now()}`);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 const html = await response.text();
                 contentDiv.innerHTML = html;
-                // Executar scripts do conteúdo carregado
+
+                // Executa scripts dinâmicos dentro do conteúdo carregado
                 const scripts = contentDiv.querySelectorAll('script');
                 scripts.forEach(oldScript => {
                     const newScript = document.createElement('script');
                     newScript.textContent = oldScript.textContent;
                     document.body.appendChild(newScript);
+                    oldScript.remove();
                 });
             } catch (error) {
-                contentDiv.innerHTML = '<div class="loading">Erro ao carregar conteúdo. Verifique se os arquivos existem.</div>';
+                console.error('Erro ao carregar:', error);
+                contentDiv.innerHTML = '<div class="loading">Erro ao carregar conteúdo. Verifique os arquivos: visao-geral.html, transacoes.html, calendario.html</div>';
             }
         }
 
@@ -109,6 +323,7 @@
             loadTabContent(activeTab);
         }
 
+        // ==================== EVENTOS DAS ABAS ====================
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -117,10 +332,15 @@
             });
         });
 
+        // ==================== LOGOUT ====================
+        document.getElementById('logoutBtn').onclick = () => {
+            logout();
+            window.location.href = 'index.html';
+        };
+
+        // ==================== INICIALIZAÇÃO ====================
         renderProfiles();
         loadCurrentTab();
-
-        document.getElementById('logoutBtn').onclick = () => { logout(); window.location.href = 'index.html'; };
     </script>
 </body>
 </html>
