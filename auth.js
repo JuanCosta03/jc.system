@@ -16,7 +16,7 @@ function initUsers() {
                 plan: 'familiar',
                 planPrice: '14.99',
                 trialEndsAt: new Date(Date.now() + 30*24*60*60*1000).toISOString(),
-                hasData: false  // indica que ainda não criou perfis/transações
+                hasData: false
             },
             {
                 id: '2',
@@ -83,7 +83,6 @@ function register(email, password, fullname, plan, price) {
     return newUser;
 }
 
-// Função para verificar se o usuário já tem dados (perfis/transações)
 function userHasData(userId) {
     const profiles = localStorage.getItem(`profiles_${userId}`);
     const transactions = localStorage.getItem(`transactions_${userId}`);
@@ -91,6 +90,7 @@ function userHasData(userId) {
 }
 
 initUsers();
+// Exportar para uso global
 window.getCurrentUser = getCurrentUser;
 window.login = login;
 window.logout = logout;
