@@ -1,29 +1,89 @@
 <div>
-    <h3>📋 Histórico de Transações</h3>
-    <table style="width:100%; border-collapse: collapse;">
-        <thead>
-            <tr style="border-bottom: 1px solid #ddd;">
-                <th style="text-align:left; padding:12px;">Data</th><th>Nome</th><th>Perfil</th><th>Valor</th><th>Tipo</th><th>Categoria</th>
-            </tr>
-        </thead>
-        <tbody id="transactionsTableBody">
-            <tr><td colspan="6" style="text-align:center;">Carregando...</td></tr>
-        </tbody>
-    </table>
+    <!-- Área de adicionar transação (aparece só se o perfil for Geral) -->
+    <div id="adminArea" style="display: none; margin-bottom: 24px;">
+        <div style="background: #f8fafc; border-radius: 24px; padding: 20px;">
+            <h3 style="margin-bottom: 16px;">➕ Adicionar Transação</h3>
+            <button id="showAddFormBtn" style="background:#0000FF; color:white; border:none; padding:6px 14px; border-radius:30px; margin-bottom:12px;">Nova Transação</button>
+            <div id="addTransactionForm" style="display:none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                <input type="text" id="newName" placeholder="Nome" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
+                <select id="newType"><option value="entrada">Entrada</option><option value="saida">Saída</option></select>
+                <input type="number" id="newValue" placeholder="Valor" step="0.01" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
+                <input type="date" id="newDate" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
+                <select id="newProfile"></select>
+                <select id="newFixo"><option value="fixa">Fixa</option><option value="variavel">Variável</option></select>
+                <select id="newParc"><option value="avista">À vista</option><option value="parcelado">Parcelado</option></select>
+                <input type="number" id="newParcelas" placeholder="Nº parcelas" value="1" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
+                <input type="date" id="newVenc" placeholder="Vencimento" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
+                <input type="text" id="newCat" placeholder="Categoria" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
+                <button id="saveTransBtn" style="background:#0000FF; color:white; border:none; padding:10px; border-radius:40px;">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de transações -->
+    <div>
+        <h3>📋 Histórico de Transações</h3>
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse: collapse;">
+                <thead><tr style="border-bottom:1px solid #ddd;">
+                    <th style="padding:12px; text-align:left;">Data</th>
+                    <th>Nome</th>
+                    <th>Perfil</th>
+                    <th>Valor</th>
+                    <th>Tipo</th>
+                    <th>Categoria</th>
+                </tr></thead>
+                <tbody id="transTableBody"><tr><td colspan="6">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('profile') || 'geral';
-    let currentUser = { id: 'demo' };
-    if (typeof getCurrentUser !== 'undefined') currentUser = getCurrentUser();
-    
-    function loadTransactions() {
+    let currentUser = null;
+    if (typeof getCurrentUser !== 'undefined') {
+        currentUser = getCurrentUser();
+    } else {
+        const userStr = localStorage.getItem('jcsystem_current_user');
+        currentUser = userStr ? JSON.parse(userStr) : null;
+    }
+    if (!currentUser) window.location.href = 'login.html';
+
+    // Lista de perfis disponíveis (para o select de perfil ao adicionar)
+    let profilesList = [];
+    function loadProfiles() {
+        const stored = localStorage.getItem(`profiles_${currentUser.id}`);
+        if (stored) {
+            profilesList = JSON.parse(stored);
+        } else {
+            profilesList = [];
+        }
+        // Atualizar select de perfil no formulário
+        const profileSelect = document.getElementById('newProfile');
+        if (profileSelect) {
+            profileSelect.innerHTML = profilesList.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        }
+    }
+
+    function getTransactions() {
         const stored = localStorage.getItem(`transactions_${currentUser.id}`);
-        let transactions = stored ? JSON.parse(stored) : [];
-        if (profileId !== 'geral') transactions = transactions.filter(t => t.perfilId === profileId);
-        const tbody = document.getElementById('transactionsTableBody');
-        if (transactions.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6">Nenhuma transação encontrada</td></tr>';
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    function saveTransactions(transactions) {
+        localStorage.setItem(`transactions_${currentUser.id}`, JSON.stringify(transactions));
+    }
+
+    function renderTransactions() {
+        let transactions = getTransactions();
+        if (profileId !== 'geral') {
+            transactions = transactions.filter(t => t.perfilId === profileId);
+        }
+        const tbody = document.getElementById('transTableBody');
+        if (!transactions.length) {
+            tbody.innerHTML = '<tr><td colspan="6">Nenhuma transação registrada</td></tr>';
             return;
         }
         tbody.innerHTML = transactions.map(t => `
@@ -32,10 +92,66 @@
                 <td><strong>${t.nome}</strong></td>
                 <td>${t.perfilNome}</td>
                 <td style="color:${t.type==='entrada'?'green':'red'}">R$ ${t.valor.toFixed(2)}</td>
-                <td><span class="${t.type==='entrada'?'badge-income':'badge-expense'}" style="background:${t.type==='entrada'?'#e6f7e6':'#fee'}; padding:4px 10px; border-radius:20px;">${t.type==='entrada'?'Receita':'Despesa'}</span></td>
+                <td><span style="background:${t.type==='entrada'?'#e6f7e6':'#fee'}; padding:4px 10px; border-radius:20px;">${t.type==='entrada'?'Receita':'Despesa'}</span></td>
                 <td>${t.categoria || '-'}</td>
             </tr>
         `).join('');
     }
-    loadTransactions();
+
+    // Mostrar área de admin apenas se perfil for Geral
+    const adminArea = document.getElementById('adminArea');
+    if (profileId === 'geral') {
+        adminArea.style.display = 'block';
+        loadProfiles();
+    } else {
+        adminArea.style.display = 'none';
+    }
+
+    // Eventos do formulário de adicionar
+    const showAddBtn = document.getElementById('showAddFormBtn');
+    const addForm = document.getElementById('addTransactionForm');
+    if (showAddBtn) {
+        showAddBtn.addEventListener('click', () => {
+            addForm.style.display = addForm.style.display === 'none' ? 'grid' : 'none';
+        });
+    }
+    const saveBtn = document.getElementById('saveTransBtn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            const nome = document.getElementById('newName').value;
+            const type = document.getElementById('newType').value;
+            const valor = parseFloat(document.getElementById('newValue').value);
+            const data = document.getElementById('newDate').value;
+            const perfilIdSel = document.getElementById('newProfile').value;
+            const perfilNome = profilesList.find(p => p.id === perfilIdSel)?.name || 'Perfil';
+            const fixo = document.getElementById('newFixo').value;
+            const parc = document.getElementById('newParc').value;
+            const parcelas = parseInt(document.getElementById('newParcelas').value) || 1;
+            const venc = document.getElementById('newVenc').value || data;
+            const cat = document.getElementById('newCat').value || 'Outros';
+            if (!nome || isNaN(valor) || !data) {
+                alert('Preencha nome, valor e data');
+                return;
+            }
+            const newTrans = {
+                id: Date.now(),
+                nome, type, valor, data, perfilId: perfilIdSel, perfilNome,
+                fixoVariavel: fixo, parcelamento: parc, parcelas, vencimento: venc,
+                pago: false, categoria: cat
+            };
+            let transactions = getTransactions();
+            transactions.push(newTrans);
+            saveTransactions(transactions);
+            renderTransactions();
+            addForm.style.display = 'none';
+            // Limpar campos
+            document.getElementById('newName').value = '';
+            document.getElementById('newValue').value = '';
+            document.getElementById('newDate').value = '';
+            document.getElementById('newVenc').value = '';
+            document.getElementById('newCat').value = '';
+        });
+    }
+
+    renderTransactions();
 </script>
