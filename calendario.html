@@ -126,11 +126,11 @@
         <div style="text-align:center; padding:40px;">Carregando calendário...</div>
     </div>
     <div class="rodape-obs">
-        * Cores baseadas nas transações do perfil selecionado. Para ver detalhes, acesse a aba "Transações".
+        * Cores baseadas nas transações do perfil selecionado.
     </div>
 
     <script>
-        // Obter perfil da URL
+        // Obter perfil da URL (passado pelo dashboard)
         const urlParams = new URLSearchParams(window.location.search);
         const profileId = urlParams.get('profile') || 'geral';
 
@@ -144,7 +144,6 @@
         }
         if (!currentUser) {
             window.location.href = 'login.html';
-            throw new Error('Usuário não autenticado');
         }
 
         function getTransactions() {
