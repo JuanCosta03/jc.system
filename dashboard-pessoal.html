@@ -55,8 +55,10 @@
             margin: 30px auto;
             padding: 0 24px;
         }
+        /* Perfis - cards menores */
         .profiles-section {
             margin-bottom: 40px;
+            overflow: visible;
         }
         .profiles-title {
             font-size: 20px;
@@ -68,63 +70,49 @@
         }
         .profiles-carousel {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             overflow-x: auto;
-            padding-bottom: 16px;
+            overflow-y: visible;
+            padding: 10px 0 20px 0;
             scroll-snap-type: x mandatory;
         }
         .profile-card {
-            flex: 0 0 140px;
+            flex: 0 0 110px;
             text-align: center;
             cursor: pointer;
             transition: transform 0.2s, opacity 0.2s;
             opacity: 0.8;
             scroll-snap-align: start;
             position: relative;
+            overflow: visible;
         }
         .profile-card.active {
             opacity: 1;
             transform: scale(1.05);
         }
         .profile-avatar {
-            width: 130px;
-            height: 130px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: linear-gradient(145deg, #0000FF, #3366FF);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0 auto 10px;
             color: white;
-            font-size: 56px;
+            font-size: 42px;
             font-weight: 500;
-            box-shadow: 0 10px 20px rgba(0,0,255,0.2);
+            box-shadow: 0 8px 16px rgba(0,0,255,0.2);
             position: relative;
             background-size: cover;
             background-position: center;
+            overflow: visible;
         }
         .edit-photo-btn {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
+            bottom: 4px;
+            right: 4px;
             background: rgba(0,0,0,0.7);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            font-size: 14px;
-            transition: 0.2s;
-        }
-        .delete-profile-btn {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #c62828;
             border: none;
             border-radius: 50%;
             width: 28px;
@@ -135,38 +123,63 @@
             cursor: pointer;
             color: white;
             font-size: 12px;
+            transition: 0.2s;
+        }
+        .edit-photo-btn:hover {
+            background: #0000FF;
+        }
+        .delete-profile-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #c62828;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 10px;
             z-index: 2;
+            transition: 0.2s;
+        }
+        .delete-profile-btn:hover {
+            background: #b71c1c;
+            transform: scale(1.1);
         }
         .profile-card.active .profile-avatar {
-            box-shadow: 0 0 0 4px white, 0 0 0 8px #0000FF;
+            box-shadow: 0 0 0 3px white, 0 0 0 6px #0000FF;
         }
         .profile-name {
             font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 4px;
+            font-size: 14px;
+            margin-bottom: 2px;
         }
         .profile-role {
-            font-size: 12px;
+            font-size: 11px;
             color: #6c757d;
         }
         .add-profile-card {
-            flex: 0 0 140px;
+            flex: 0 0 110px;
             text-align: center;
             cursor: pointer;
             transition: transform 0.2s;
             scroll-snap-align: start;
         }
         .add-profile-avatar {
-            width: 130px;
-            height: 130px;
+            width: 100px;
+            height: 100px;
             background: #e2e8f0;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0 auto 10px;
             color: #6c757d;
-            font-size: 48px;
+            font-size: 38px;
             border: 2px dashed #cbd5e1;
             transition: 0.2s;
         }
@@ -174,6 +187,12 @@
             background: #cbd5e1;
             color: #0000FF;
         }
+        .add-profile-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        /* Tabs */
         .tabs {
             display: flex;
             gap: 8px;
@@ -191,6 +210,7 @@
             font-weight: 600;
             cursor: pointer;
             color: #4a5568;
+            transition: all 0.2s;
         }
         .tab-btn.active {
             background: #0000FF;
@@ -212,6 +232,7 @@
             text-align: center;
             padding: 60px;
         }
+        /* Modais */
         .modal {
             display: none;
             position: fixed;
@@ -285,8 +306,11 @@
             color: white;
         }
         @media (max-width: 768px) {
-            .profile-card, .add-profile-card { flex: 0 0 100px; }
-            .profile-avatar, .add-profile-avatar { width: 90px; height: 90px; font-size: 40px; }
+            .profile-card, .add-profile-card { flex: 0 0 90px; }
+            .profile-avatar, .add-profile-avatar { width: 80px; height: 80px; font-size: 32px; }
+            .profile-name, .add-profile-name { font-size: 12px; }
+            .edit-photo-btn { width: 24px; height: 24px; font-size: 10px; bottom: 2px; right: 2px; }
+            .delete-profile-btn { width: 20px; height: 20px; font-size: 8px; top: -4px; right: -4px; }
             .tabs { width: 100%; justify-content: center; }
             .tab-btn { padding: 8px 16px; font-size: 14px; }
         }
@@ -446,7 +470,7 @@
             document.getElementById('addProfileBtn')?.addEventListener('click', () => openModal());
         }
 
-        // ==================== MODAL DE CRIAÇÃO/EDIÇÃO DE PERFIL ====================
+        // ==================== MODAL DE CRIAÇÃO/EDIÇÃO ====================
         function openModal(profile = null) {
             const modal = document.getElementById('profileModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -498,7 +522,7 @@
             document.getElementById('urlInput').style.display = 'block';
         });
 
-        // Salvar perfil (criação ou edição)
+        // Salvar perfil
         document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
             const name = document.getElementById('profileName').value.trim();
             const role = document.getElementById('profileRole').value.trim();
@@ -586,7 +610,7 @@
             if (event.target === profileModal) profileModal.style.display = 'none';
         };
 
-        // ==================== CARREGAR ABAS (VISÃO GERAL, TRANSAÇÕES, CALENDÁRIO) ====================
+        // ==================== CARREGAR ABAS ====================
         async function loadTabContent(tabId) {
             const contentDiv = document.getElementById('tabContent');
             contentDiv.innerHTML = '<div class="loading">Carregando...</div>';
