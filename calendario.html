@@ -10,22 +10,33 @@
             padding: 0;
             box-sizing: border-box;
         }
-        .calendario-wrapper {
+        body {
             font-family: 'Inter', sans-serif;
             background: white;
             border-radius: 28px;
-            padding: 20px;
         }
-        /* Layout de duas colunas */
-        .calendario-layout {
-            display: grid;
-            grid-template-columns: 1fr 280px;
+        .calendario-container {
+            display: flex;
+            flex-wrap: wrap;
             gap: 24px;
         }
         /* Coluna do calendário */
-        .cal-main {
-            min-width: 0; /* Evita overflow */
+        .calendario-col {
+            flex: 2;
+            min-width: 280px;
         }
+        /* Coluna de anotações */
+        .anotacoes-col {
+            flex: 1;
+            min-width: 250px;
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        /* Cabeçalho do calendário */
         .cal-header {
             display: flex;
             justify-content: space-between;
@@ -59,6 +70,7 @@
             margin: 0 4px;
             font-weight: bold;
         }
+        /* Legendas */
         .legend {
             display: flex;
             gap: 20px;
@@ -77,6 +89,7 @@
             height: 12px;
             border-radius: 50%;
         }
+        /* Grade do calendário */
         .weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -103,6 +116,10 @@
             align-items: center;
             justify-content: center;
         }
+        .calendar-day.selected {
+            background: #e0e7ff;
+            border: 2px solid #0000FF;
+        }
         .calendar-day:hover {
             background: #e2e8f0;
             transform: scale(1.02);
@@ -117,107 +134,49 @@
             border-radius: 50%;
             margin-top: 6px;
         }
-        /* Coluna de notas */
-        .notes-sidebar {
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .notes-sidebar h3 {
+        /* Anotações */
+        .anotacoes-header {
             font-size: 18px;
-            color: #0000FF;
+            font-weight: 600;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .selected-date {
-            background: white;
-            border-radius: 16px;
-            padding: 12px;
-            font-weight: 500;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 14px;
+            color: #0000FF;
+            margin-bottom: 12px;
         }
-        .notes-textarea {
+        .anotacao-textarea {
             width: 100%;
-            min-height: 200px;
+            height: 200px;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 16px;
             font-family: inherit;
-            font-size: 14px;
             resize: vertical;
+            margin-bottom: 16px;
         }
-        .save-note-btn {
+        .btn-salvar {
             background: #0000FF;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 10px 20px;
             border-radius: 40px;
             cursor: pointer;
             font-weight: 600;
-        }
-        /* Modal de transações (mantido) */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
         }
-        .modal-content {
-            background: white;
-            border-radius: 32px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 24px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-        }
-        .modal-content h3 {
-            margin-bottom: 16px;
-            color: #0000FF;
-        }
-        .modal-content .close-modal {
-            float: right;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .transaction-list {
-            list-style: none;
-            margin-top: 16px;
-        }
-        .transaction-list li {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-        }
-        .empty-day {
-            text-align: center;
-            padding: 20px;
+        .no-selection {
             color: #6c757d;
-        }
-        @media (max-width: 900px) {
-            .calendario-layout {
-                grid-template-columns: 1fr;
-            }
-            .notes-sidebar {
-                order: 2;
-            }
+            text-align: center;
+            margin-top: 20px;
         }
         @media (max-width: 768px) {
+            .calendario-container {
+                flex-direction: column;
+            }
             .calendar-day {
                 min-height: 60px;
                 padding: 6px 2px;
@@ -229,55 +188,48 @@
     </style>
 </head>
 <body>
-<div class="calendario-wrapper">
-    <div class="calendario-layout">
-        <!-- Coluna principal: calendário -->
-        <div class="cal-main">
-            <div class="cal-header">
-                <div class="month-year">
-                    <select id="monthSelect"></select>
-                    <select id="yearSelect"></select>
-                </div>
-                <div class="nav-buttons">
-                    <button id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
-                    <button id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
-                </div>
+<div class="calendario-container">
+    <!-- Coluna do calendário -->
+    <div class="calendario-col">
+        <div class="cal-header">
+            <div class="month-year">
+                <select id="monthSelect"></select>
+                <select id="yearSelect"></select>
             </div>
-            <div class="legend">
-                <div class="legend-item"><div class="legend-color" style="background:#adb5bd;"></div><span>Sem eventos</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#0000FF;"></div><span>Em dia</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#2e7d32;"></div><span>Pago</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#f39c12;"></div><span>A vencer</span></div>
-                <div class="legend-item"><div class="legend-color" style="background:#c62828;"></div><span>Atrasado</span></div>
+            <div class="nav-buttons">
+                <button id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
+                <button id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
             </div>
-            <div class="weekdays">
-                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-            </div>
-            <div id="calendarGrid" class="calendar-grid"></div>
         </div>
 
-        <!-- Coluna lateral de anotações -->
-        <div class="notes-sidebar">
-            <h3><i class="fas fa-pen-alt"></i> Anotações do dia</h3>
-            <div class="selected-date" id="selectedDateDisplay">Nenhum dia selecionado</div>
-            <textarea id="dailyNote" class="notes-textarea" placeholder="Escreva suas anotações para este dia..."></textarea>
-            <button id="saveNoteBtn" class="save-note-btn">Salvar anotação</button>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#adb5bd;"></div><span>Sem eventos</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#0000FF;"></div><span>Em dia</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#2e7d32;"></div><span>Pago</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#f39c12;"></div><span>A vencer</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#c62828;"></div><span>Atrasado</span></div>
         </div>
+
+        <div class="weekdays">
+            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+    </div>
+
+    <!-- Coluna de anotações -->
+    <div class="anotacoes-col">
+        <div class="anotacoes-header">
+            <i class="fas fa-pencil-alt"></i> Anotações do dia
+        </div>
+        <div id="selectedDateDisplay" class="selected-date">Nenhum dia selecionado</div>
+        <textarea id="noteText" class="anotacao-textarea" placeholder="Escreva suas anotações para este dia..."></textarea>
+        <button id="saveNoteBtn" class="btn-salvar">Salvar anotação</button>
     </div>
 </div>
 
-<!-- Modal de transações (mantido) -->
-<div id="transactionModal" class="modal-overlay">
-    <div class="modal-content">
-        <button class="close-modal">&times;</button>
-        <h3 id="modalDateTitle"></h3>
-        <div id="modalTransactions"></div>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <script>
-    // Obter perfil selecionado da URL
+    // Obter perfil selecionado da URL (opcional)
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('profile') || 'geral';
 
@@ -293,26 +245,18 @@
         window.location.href = 'login.html';
     }
 
-    // Datas atuais
-    let currentDate = new Date();
-    let currentYear = currentDate.getFullYear();
-    let currentMonth = currentDate.getMonth(); // 0-11
+    // Estado do calendário
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth(); // 0-11
+    let selectedDateStr = null; // formato YYYY-MM-DD
 
-    // Dia selecionado (para notas)
-    let selectedDateStr = null;
-
-    // Carregar transações
+    // Carregar transações (para calcular os status dos dias)
     function getTransactions() {
         const stored = localStorage.getItem(`transactions_${currentUser.id}`);
         return stored ? JSON.parse(stored) : [];
     }
 
-    // Salvar transações (caso necessário)
-    function saveTransactions(transactions) {
-        localStorage.setItem(`transactions_${currentUser.id}`, JSON.stringify(transactions));
-    }
-
-    // Carregar notas
+    // Carregar anotações
     function getNotes() {
         const stored = localStorage.getItem(`notes_${currentUser.id}`);
         return stored ? JSON.parse(stored) : {};
@@ -322,7 +266,7 @@
         localStorage.setItem(`notes_${currentUser.id}`, JSON.stringify(notes));
     }
 
-    // Obter status do dia
+    // Obter status do dia baseado nas transações
     function getDayStatus(transactions, dateStr, today) {
         const dayTrans = transactions.filter(t => t.vencimento === dateStr);
         if (dayTrans.length === 0) return 'gray';
@@ -335,9 +279,10 @@
         return 'blue';
     }
 
-    // Renderizar calendário
+    // Renderizar grade do calendário
     function renderCalendar() {
         const transactions = getTransactions();
+        // Filtrar por perfil (se não for geral)
         const filtered = profileId === 'geral' ? transactions : transactions.filter(t => t.perfilId === profileId);
         const firstDay = new Date(currentYear, currentMonth, 1).getDay();
         const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -347,12 +292,14 @@
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = '';
 
+        // Dias vazios antes do primeiro dia
         for (let i = 0; i < firstDay; i++) {
             const emptyDiv = document.createElement('div');
             emptyDiv.style.background = 'transparent';
             grid.appendChild(emptyDiv);
         }
 
+        // Dias do mês
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const status = getDayStatus(filtered, dateStr, today);
@@ -365,66 +312,29 @@
                 case 'red': dotColor = '#c62828'; break;
                 default: dotColor = '#adb5bd';
             }
+
             const dayDiv = document.createElement('div');
             dayDiv.className = 'calendar-day';
+            if (selectedDateStr === dateStr) dayDiv.classList.add('selected');
             dayDiv.innerHTML = `
                 <div class="day-number">${d}</div>
                 <div class="status-dot" style="background:${dotColor}"></div>
             `;
-            dayDiv.addEventListener('click', (function(ds) {
-                return function() { selectDate(ds, filtered); };
-            })(dateStr));
+            dayDiv.addEventListener('click', () => selectDay(dateStr));
             grid.appendChild(dayDiv);
         }
     }
 
-    // Selecionar um dia e mostrar anotações
-    function selectDate(dateStr, allTransactions) {
+    // Selecionar um dia e carregar anotação
+    function selectDay(dateStr) {
         selectedDateStr = dateStr;
-        const formatted = new Date(dateStr).toLocaleDateString('pt-BR');
-        document.getElementById('selectedDateDisplay').innerText = `📅 ${formatted}`;
-        // Carregar anotação salva
+        renderCalendar(); // re-render para destacar o dia selecionado
+
         const notes = getNotes();
         const note = notes[dateStr] || '';
-        document.getElementById('dailyNote').value = note;
-        // Também abrir modal com transações (opcional, mas mantido)
-        showDayTransactions(dateStr, allTransactions);
-    }
-
-    // Exibir modal com transações do dia
-    function showDayTransactions(dateStr, allTransactions) {
-        const dayTrans = allTransactions.filter(t => t.vencimento === dateStr);
-        const modal = document.getElementById('transactionModal');
-        const modalTitle = document.getElementById('modalDateTitle');
-        const modalContent = document.getElementById('modalTransactions');
-
+        document.getElementById('noteText').value = note;
         const formattedDate = new Date(dateStr).toLocaleDateString('pt-BR');
-        modalTitle.innerText = `Transações - ${formattedDate}`;
-
-        if (dayTrans.length === 0) {
-            modalContent.innerHTML = '<div class="empty-day">Nenhuma transação para este dia.</div>';
-        } else {
-            let html = '<ul class="transaction-list">';
-            dayTrans.forEach(t => {
-                const statusText = t.pago ? '✅ Pago' : (new Date(t.vencimento) < new Date() ? '⚠️ Atrasado' : '⏳ Pendente');
-                html += `
-                    <li>
-                        <div>
-                            <strong>${t.nome}</strong><br>
-                            <small>Perfil: ${t.perfilNome}</small><br>
-                            <small>Categoria: ${t.categoria || '-'}</small>
-                        </div>
-                        <div style="text-align:right;">
-                            R$ ${t.valor.toFixed(2)}<br>
-                            <span style="font-size:12px;">${statusText}</span>
-                        </div>
-                    </li>
-                `;
-            });
-            html += '</ul>';
-            modalContent.innerHTML = html;
-        }
-        modal.style.display = 'flex';
+        document.getElementById('selectedDateDisplay').innerHTML = `<i class="fas fa-calendar-day"></i> ${formattedDate}`;
     }
 
     // Salvar anotação do dia selecionado
@@ -433,21 +343,12 @@
             alert('Selecione um dia no calendário primeiro.');
             return;
         }
-        const note = document.getElementById('dailyNote').value;
+        const note = document.getElementById('noteText').value;
         const notes = getNotes();
         notes[selectedDateStr] = note;
         saveNotes(notes);
         alert('Anotação salva com sucesso!');
     }
-
-    // Fechar modal
-    document.querySelector('.close-modal')?.addEventListener('click', () => {
-        document.getElementById('transactionModal').style.display = 'none';
-    });
-    window.onclick = (event) => {
-        const modal = document.getElementById('transactionModal');
-        if (event.target === modal) modal.style.display = 'none';
-    };
 
     // Preencher selects de mês e ano
     function populateSelectors() {
@@ -480,7 +381,7 @@
         });
     }
 
-    // Navegação
+    // Navegação pelos botões
     document.getElementById('prevMonthBtn')?.addEventListener('click', () => {
         if (currentMonth === 0) {
             currentMonth = 11;
@@ -503,11 +404,17 @@
         document.getElementById('yearSelect').value = currentYear;
         renderCalendar();
     });
+
     document.getElementById('saveNoteBtn')?.addEventListener('click', saveCurrentNote);
 
     // Inicializar
     populateSelectors();
     renderCalendar();
+    // Se não houver dia selecionado, mostrar placeholder
+    if (!selectedDateStr) {
+        document.getElementById('selectedDateDisplay').innerHTML = 'Nenhum dia selecionado';
+        document.getElementById('noteText').value = '';
+    }
 </script>
 </body>
 </html>
