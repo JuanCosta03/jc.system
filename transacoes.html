@@ -1,5 +1,5 @@
 <div>
-    <!-- Área de adicionar transação (aparece só se o perfil for Geral) -->
+    <!-- Área de adicionar transação (visível apenas para perfil Geral) -->
     <div id="adminArea" style="display: none; margin-bottom: 24px;">
         <div style="background: #f8fafc; border-radius: 24px; padding: 20px;">
             <h3 style="margin-bottom: 16px;">➕ Adicionar Transação</h3>
@@ -40,11 +40,8 @@
 </div>
 
 <script>
-    // Obter perfil da URL (passado pelo dashboard)
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('profile') || 'geral';
-
-    // Obter usuário atual
     let currentUser = null;
     if (typeof getCurrentUser !== 'undefined') {
         currentUser = getCurrentUser();
@@ -54,7 +51,6 @@
     }
     if (!currentUser) window.location.href = 'login.html';
 
-    // Lista de perfis disponíveis (para o select de perfil ao adicionar)
     let profilesList = [];
     function loadProfiles() {
         const stored = localStorage.getItem(`profiles_${currentUser.id}`);
@@ -63,7 +59,6 @@
         } else {
             profilesList = [];
         }
-        // Atualizar select de perfil no formulário
         const profileSelect = document.getElementById('newProfile');
         if (profileSelect) {
             profileSelect.innerHTML = profilesList.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
@@ -81,7 +76,6 @@
 
     function renderTransactions() {
         let transactions = getTransactions();
-        // Filtrar pelo perfil selecionado
         if (profileId !== 'geral') {
             transactions = transactions.filter(t => t.perfilId === profileId);
         }
@@ -111,7 +105,6 @@
         adminArea.style.display = 'none';
     }
 
-    // Eventos do formulário de adicionar (apenas se perfil Geral)
     const showAddBtn = document.getElementById('showAddFormBtn');
     const addForm = document.getElementById('addTransactionForm');
     if (showAddBtn) {
