@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendário Financeiro</title>
+    <title>Calendário Anual | JCSystem</title>
     <style>
         * {
             margin: 0;
@@ -11,410 +11,283 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: white;
             border-radius: 28px;
-        }
-        .calendario-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-        }
-        /* Coluna do calendário */
-        .calendario-col {
-            flex: 2;
-            min-width: 280px;
-        }
-        /* Coluna de anotações */
-        .anotacoes-col {
-            flex: 1;
-            min-width: 250px;
-            background: #f8fafc;
-            border-radius: 24px;
             padding: 20px;
-            height: fit-content;
-            position: sticky;
-            top: 20px;
         }
-        /* Cabeçalho do calendário */
-        .cal-header {
+        .calendario-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 16px;
         }
-        .month-year {
+        .ano-selector {
             display: flex;
-            gap: 12px;
             align-items: center;
+            gap: 12px;
             background: #f0f2f5;
-            padding: 6px 16px;
+            padding: 8px 20px;
             border-radius: 40px;
         }
-        .month-year select {
-            padding: 8px 12px;
+        .ano-selector label {
+            font-weight: 600;
+        }
+        .ano-selector select {
+            padding: 8px 16px;
             border-radius: 30px;
             border: 1px solid #ddd;
             background: white;
             font-weight: 500;
+            font-size: 16px;
         }
-        .nav-buttons button {
-            background: #f0f2f5;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            margin: 0 4px;
-            font-weight: bold;
-        }
-        /* Legendas */
-        .legend {
+        .legendas {
             display: flex;
             gap: 20px;
-            justify-content: center;
-            margin-bottom: 24px;
             flex-wrap: wrap;
+            justify-content: center;
         }
-        .legend-item {
+        .legenda-item {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 12px;
         }
-        .legend-color {
-            width: 12px;
-            height: 12px;
+        .legenda-cor {
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
         }
-        /* Grade do calendário */
-        .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            text-align: center;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #4a5568;
-        }
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-        }
-        .calendar-day {
-            background: #f8fafc;
-            border-radius: 16px;
-            padding: 12px 6px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-height: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .calendar-day.selected {
-            background: #e0e7ff;
-            border: 2px solid #0000FF;
-        }
-        .calendar-day:hover {
-            background: #e2e8f0;
-            transform: scale(1.02);
-        }
-        .day-number {
-            font-weight: 600;
-            font-size: 16px;
-        }
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-top: 6px;
-        }
-        /* Anotações */
-        .anotacoes-header {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .selected-date {
-            font-size: 14px;
-            color: #0000FF;
-            margin-bottom: 12px;
-        }
-        .anotacao-textarea {
-            width: 100%;
-            height: 200px;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 16px;
-            font-family: inherit;
-            resize: vertical;
-            margin-bottom: 16px;
-        }
-        .btn-salvar {
-            background: #0000FF;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-        }
-        .no-selection {
-            color: #6c757d;
-            text-align: center;
+        /* Tabela do calendário anual */
+        .calendario-tabela {
+            overflow-x: auto;
             margin-top: 20px;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 800px;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            background-color: #f1f5f9;
+        }
+        .mes-coluna {
+            background: #eef2ff;
+            font-weight: 700;
+        }
+        .dia-celula {
+            position: relative;
+            cursor: default;
+        }
+        .status-bolinha {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 auto;
+        }
+        .sem-evento {
+            background-color: #adb5bd;
+        }
+        .em-dia {
+            background-color: #0000FF;
+        }
+        .pago {
+            background-color: #2e7d32;
+        }
+        .a-vencer {
+            background-color: #f39c12;
+        }
+        .atrasado {
+            background-color: #c62828;
+        }
+        .sem-dia {
+            background-color: transparent;
+        }
+        .rodape-obs {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+        }
         @media (max-width: 768px) {
-            .calendario-container {
-                flex-direction: column;
+            th, td {
+                padding: 4px 2px;
+                font-size: 10px;
             }
-            .calendar-day {
-                min-height: 60px;
-                padding: 6px 2px;
-            }
-            .day-number {
-                font-size: 12px;
+            .status-bolinha {
+                width: 14px;
+                height: 14px;
             }
         }
     </style>
 </head>
 <body>
-<div class="calendario-container">
-    <!-- Coluna do calendário -->
-    <div class="calendario-col">
-        <div class="cal-header">
-            <div class="month-year">
-                <select id="monthSelect"></select>
-                <select id="yearSelect"></select>
-            </div>
-            <div class="nav-buttons">
-                <button id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
-                <button id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
-            </div>
+    <div class="calendario-header">
+        <div class="ano-selector">
+            <label>📅 Ano:</label>
+            <select id="anoSelect"></select>
         </div>
-
-        <div class="legend">
-            <div class="legend-item"><div class="legend-color" style="background:#adb5bd;"></div><span>Sem eventos</span></div>
-            <div class="legend-item"><div class="legend-color" style="background:#0000FF;"></div><span>Em dia</span></div>
-            <div class="legend-item"><div class="legend-color" style="background:#2e7d32;"></div><span>Pago</span></div>
-            <div class="legend-item"><div class="legend-color" style="background:#f39c12;"></div><span>A vencer</span></div>
-            <div class="legend-item"><div class="legend-color" style="background:#c62828;"></div><span>Atrasado</span></div>
+        <div class="legendas">
+            <div class="legenda-item"><div class="legenda-cor sem-evento"></div><span>Sem eventos</span></div>
+            <div class="legenda-item"><div class="legenda-cor em-dia"></div><span>Em dia</span></div>
+            <div class="legenda-item"><div class="legenda-cor pago"></div><span>Pago</span></div>
+            <div class="legenda-item"><div class="legenda-cor a-vencer"></div><span>A vencer</span></div>
+            <div class="legenda-item"><div class="legenda-cor atrasado"></div><span>Atrasado</span></div>
         </div>
-
-        <div class="weekdays">
-            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-        </div>
-        <div id="calendarGrid" class="calendar-grid"></div>
     </div>
 
-    <!-- Coluna de anotações -->
-    <div class="anotacoes-col">
-        <div class="anotacoes-header">
-            <i class="fas fa-pencil-alt"></i> Anotações do dia
-        </div>
-        <div id="selectedDateDisplay" class="selected-date">Nenhum dia selecionado</div>
-        <textarea id="noteText" class="anotacao-textarea" placeholder="Escreva suas anotações para este dia..."></textarea>
-        <button id="saveNoteBtn" class="btn-salvar">Salvar anotação</button>
+    <div class="calendario-tabela" id="calendarioContainer">
+        <!-- Tabela será gerada dinamicamente -->
+        <div style="text-align:center; padding:40px;">Carregando calendário...</div>
     </div>
-</div>
+    <div class="rodape-obs">
+        * Cores baseadas nas transações do perfil selecionado. Para ver detalhes, acesse a aba "Transações".
+    </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-<script>
-    // Obter perfil selecionado da URL (opcional)
-    const urlParams = new URLSearchParams(window.location.search);
-    const profileId = urlParams.get('profile') || 'geral';
+    <script>
+        // ==================== CONFIGURAÇÃO INICIAL ====================
+        // Obter perfil selecionado da URL (passado pelo dashboard)
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileId = urlParams.get('profile') || 'geral';
 
-    // Obter usuário atual
-    let currentUser = null;
-    if (typeof getCurrentUser !== 'undefined') {
-        currentUser = getCurrentUser();
-    } else {
-        const userStr = localStorage.getItem('jcsystem_current_user');
-        currentUser = userStr ? JSON.parse(userStr) : null;
-    }
-    if (!currentUser) {
-        window.location.href = 'login.html';
-    }
-
-    // Estado do calendário
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth(); // 0-11
-    let selectedDateStr = null; // formato YYYY-MM-DD
-
-    // Carregar transações (para calcular os status dos dias)
-    function getTransactions() {
-        const stored = localStorage.getItem(`transactions_${currentUser.id}`);
-        return stored ? JSON.parse(stored) : [];
-    }
-
-    // Carregar anotações
-    function getNotes() {
-        const stored = localStorage.getItem(`notes_${currentUser.id}`);
-        return stored ? JSON.parse(stored) : {};
-    }
-
-    function saveNotes(notes) {
-        localStorage.setItem(`notes_${currentUser.id}`, JSON.stringify(notes));
-    }
-
-    // Obter status do dia baseado nas transações
-    function getDayStatus(transactions, dateStr, today) {
-        const dayTrans = transactions.filter(t => t.vencimento === dateStr);
-        if (dayTrans.length === 0) return 'gray';
-        const allPaid = dayTrans.every(t => t.pago === true);
-        const anyOverdue = dayTrans.some(t => !t.pago && new Date(t.vencimento) < today);
-        const anyPending = dayTrans.some(t => !t.pago && new Date(t.vencimento) >= today);
-        if (allPaid) return 'green';
-        if (anyOverdue) return 'red';
-        if (anyPending) return 'orange';
-        return 'blue';
-    }
-
-    // Renderizar grade do calendário
-    function renderCalendar() {
-        const transactions = getTransactions();
-        // Filtrar por perfil (se não for geral)
-        const filtered = profileId === 'geral' ? transactions : transactions.filter(t => t.perfilId === profileId);
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        const grid = document.getElementById('calendarGrid');
-        grid.innerHTML = '';
-
-        // Dias vazios antes do primeiro dia
-        for (let i = 0; i < firstDay; i++) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.style.background = 'transparent';
-            grid.appendChild(emptyDiv);
+        // Obter usuário logado
+        let currentUser = null;
+        if (typeof getCurrentUser !== 'undefined') {
+            currentUser = getCurrentUser();
+        } else {
+            const userStr = localStorage.getItem('jcsystem_current_user');
+            currentUser = userStr ? JSON.parse(userStr) : null;
+        }
+        if (!currentUser) {
+            window.location.href = 'login.html';
+            throw new Error('Usuário não autenticado');
         }
 
-        // Dias do mês
-        for (let d = 1; d <= daysInMonth; d++) {
-            const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const status = getDayStatus(filtered, dateStr, today);
-            let dotColor = '';
+        // ==================== DADOS ====================
+        function getTransactions() {
+            const stored = localStorage.getItem(`transactions_${currentUser.id}`);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        // Determinar o status de um dia específico (com base nas transações daquele dia)
+        // Retorna: 'gray', 'blue', 'green', 'orange', 'red'
+        function getDayStatus(transactions, dateStr, today) {
+            const dayTrans = transactions.filter(t => t.vencimento === dateStr);
+            if (dayTrans.length === 0) return 'gray';
+            const allPaid = dayTrans.every(t => t.pago === true);
+            const anyOverdue = dayTrans.some(t => !t.pago && new Date(t.vencimento) < today);
+            const anyPending = dayTrans.some(t => !t.pago && new Date(t.vencimento) >= today);
+            if (allPaid) return 'green';
+            if (anyOverdue) return 'red';
+            if (anyPending) return 'orange';
+            return 'blue';
+        }
+
+        // Mapear status para classe CSS
+        function statusToClass(status) {
             switch(status) {
-                case 'gray': dotColor = '#adb5bd'; break;
-                case 'green': dotColor = '#2e7d32'; break;
-                case 'blue': dotColor = '#0000FF'; break;
-                case 'orange': dotColor = '#f39c12'; break;
-                case 'red': dotColor = '#c62828'; break;
-                default: dotColor = '#adb5bd';
+                case 'gray': return 'sem-evento';
+                case 'blue': return 'em-dia';
+                case 'green': return 'pago';
+                case 'orange': return 'a-vencer';
+                case 'red': return 'atrasado';
+                default: return 'sem-evento';
             }
-
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'calendar-day';
-            if (selectedDateStr === dateStr) dayDiv.classList.add('selected');
-            dayDiv.innerHTML = `
-                <div class="day-number">${d}</div>
-                <div class="status-dot" style="background:${dotColor}"></div>
-            `;
-            dayDiv.addEventListener('click', () => selectDay(dateStr));
-            grid.appendChild(dayDiv);
         }
-    }
 
-    // Selecionar um dia e carregar anotação
-    function selectDay(dateStr) {
-        selectedDateStr = dateStr;
-        renderCalendar(); // re-render para destacar o dia selecionado
+        // ==================== RENDERIZAR CALENDÁRIO ANUAL ====================
+        function renderCalendarioAnual(ano) {
+            const transactions = getTransactions();
+            // Filtrar transações pelo perfil selecionado (se não for geral)
+            const filtered = profileId === 'geral' ? transactions : transactions.filter(t => t.perfilId === profileId);
+            const today = new Date();
+            today.setHours(0,0,0,0);
 
-        const notes = getNotes();
-        const note = notes[dateStr] || '';
-        document.getElementById('noteText').value = note;
-        const formattedDate = new Date(dateStr).toLocaleDateString('pt-BR');
-        document.getElementById('selectedDateDisplay').innerHTML = `<i class="fas fa-calendar-day"></i> ${formattedDate}`;
-    }
+            // Nomes dos meses
+            const meses = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+            // Abreviações para cabeçalho
+            const mesesAbrev = meses.map(m => m.substring(0,3));
 
-    // Salvar anotação do dia selecionado
-    function saveCurrentNote() {
-        if (!selectedDateStr) {
-            alert('Selecione um dia no calendário primeiro.');
-            return;
+            // Determinar quantos dias tem cada mês (considerando ano bissexto)
+            const diasPorMes = [];
+            for (let m = 0; m < 12; m++) {
+                diasPorMes.push(new Date(ano, m+1, 0).getDate());
+            }
+            const maxDias = Math.max(...diasPorMes); // 31 normalmente
+
+            // Construir tabela: linhas = dias (1 a maxDias), colunas = meses
+            let html = '<table>';
+            // Cabeçalho: meses
+            html += '<thead><tr><th>Dia</th>';
+            for (let m = 0; m < 12; m++) {
+                html += `<th class="mes-coluna">${mesesAbrev[m]}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+
+            // Para cada dia (1 a maxDias)
+            for (let dia = 1; dia <= maxDias; dia++) {
+                html += `<tr><td style="font-weight:600; background:#f8fafc;">${dia}</td>`;
+                for (let mes = 0; mes < 12; mes++) {
+                    // Verificar se este dia existe neste mês
+                    if (dia > diasPorMes[mes]) {
+                        html += `<td class="dia-celula"><div class="status-bolinha sem-dia"></div></td>`;
+                        continue;
+                    }
+                    // Formatar data no formato YYYY-MM-DD
+                    const mesNum = mes + 1;
+                    const mesStr = mesNum < 10 ? '0' + mesNum : '' + mesNum;
+                    const diaStr = dia < 10 ? '0' + dia : '' + dia;
+                    const dataStr = `${ano}-${mesStr}-${diaStr}`;
+                    const status = getDayStatus(filtered, dataStr, today);
+                    const classe = statusToClass(status);
+                    html += `<td class="dia-celula"><div class="status-bolinha ${classe}"></div></td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            document.getElementById('calendarioContainer').innerHTML = html;
         }
-        const note = document.getElementById('noteText').value;
-        const notes = getNotes();
-        notes[selectedDateStr] = note;
-        saveNotes(notes);
-        alert('Anotação salva com sucesso!');
-    }
 
-    // Preencher selects de mês e ano
-    function populateSelectors() {
-        const monthSelect = document.getElementById('monthSelect');
-        const yearSelect = document.getElementById('yearSelect');
-        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        monthSelect.innerHTML = '';
-        months.forEach((m, idx) => {
-            const option = document.createElement('option');
-            option.value = idx;
-            option.textContent = m;
-            if (idx === currentMonth) option.selected = true;
-            monthSelect.appendChild(option);
-        });
-        const currentYearNum = new Date().getFullYear();
-        for (let y = currentYearNum - 5; y <= currentYearNum + 5; y++) {
-            const option = document.createElement('option');
-            option.value = y;
-            option.textContent = y;
-            if (y === currentYear) option.selected = true;
-            yearSelect.appendChild(option);
+        // ==================== SELETOR DE ANOS (2015 em diante) ====================
+        function preencherAnos() {
+            const anoAtual = new Date().getFullYear();
+            const select = document.getElementById('anoSelect');
+            select.innerHTML = '';
+            // Anos de 2015 até anoAtual + 5 (para permitir planejamento futuro)
+            for (let ano = 2015; ano <= anoAtual + 5; ano++) {
+                const option = document.createElement('option');
+                option.value = ano;
+                option.textContent = ano;
+                if (ano === anoAtual) option.selected = true;
+                select.appendChild(option);
+            }
+            select.addEventListener('change', (e) => {
+                const anoSelecionado = parseInt(e.target.value);
+                renderCalendarioAnual(anoSelecionado);
+            });
+            // Renderizar com o ano atual inicial
+            renderCalendarioAnual(anoAtual);
         }
-        monthSelect.addEventListener('change', () => {
-            currentMonth = parseInt(monthSelect.value);
-            renderCalendar();
-        });
-        yearSelect.addEventListener('change', () => {
-            currentYear = parseInt(yearSelect.value);
-            renderCalendar();
-        });
-    }
 
-    // Navegação pelos botões
-    document.getElementById('prevMonthBtn')?.addEventListener('click', () => {
-        if (currentMonth === 0) {
-            currentMonth = 11;
-            currentYear--;
-        } else {
-            currentMonth--;
-        }
-        document.getElementById('monthSelect').value = currentMonth;
-        document.getElementById('yearSelect').value = currentYear;
-        renderCalendar();
-    });
-    document.getElementById('nextMonthBtn')?.addEventListener('click', () => {
-        if (currentMonth === 11) {
-            currentMonth = 0;
-            currentYear++;
-        } else {
-            currentMonth++;
-        }
-        document.getElementById('monthSelect').value = currentMonth;
-        document.getElementById('yearSelect').value = currentYear;
-        renderCalendar();
-    });
-
-    document.getElementById('saveNoteBtn')?.addEventListener('click', saveCurrentNote);
-
-    // Inicializar
-    populateSelectors();
-    renderCalendar();
-    // Se não houver dia selecionado, mostrar placeholder
-    if (!selectedDateStr) {
-        document.getElementById('selectedDateDisplay').innerHTML = 'Nenhum dia selecionado';
-        document.getElementById('noteText').value = '';
-    }
-</script>
+        // ==================== INICIALIZAR ====================
+        preencherAnos();
+    </script>
 </body>
 </html>
