@@ -38,7 +38,7 @@ function initUsers() {
         ];
         localStorage.setItem(USERS_KEY, JSON.stringify(testUsers));
     } else {
-        // Verificar se a conta pessoal existe com o email correto
+        // Garantir que a conta pessoal exista com o email correto
         let usersArray = JSON.parse(users);
         const exists = usersArray.some(u => u.email === 'jc.system@hotmail.com');
         if (!exists) {
@@ -54,7 +54,7 @@ function initUsers() {
             });
             localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
         } else {
-            // Se já existe, garantir que a senha esteja correta (caso tenha sido alterada)
+            // Forçar senha correta caso tenha sido alterada
             const index = usersArray.findIndex(u => u.email === 'jc.system@hotmail.com');
             if (index !== -1 && usersArray[index].password !== 'Adm@123') {
                 usersArray[index].password = 'Adm@123';
@@ -65,7 +65,7 @@ function initUsers() {
 }
 
 function login(email, password) {
-    console.log('Tentando login:', email, password);
+    console.log('Tentando login:', email);
     const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
     const user = users.find(u => u.email === email && u.password === password);
     if (user) {
@@ -73,7 +73,7 @@ function login(email, password) {
         console.log('Login bem-sucedido:', user.email);
         return user;
     }
-    console.log('Login falhou: usuário não encontrado ou senha incorreta');
+    console.log('Login falhou');
     return null;
 }
 
@@ -107,15 +107,8 @@ function register(email, password, fullname, plan, price) {
     return newUser;
 }
 
-function userHasData(userId) {
-    const profiles = localStorage.getItem(`profiles_${userId}`);
-    const transactions = localStorage.getItem(`transactions_${userId}`);
-    return (profiles && JSON.parse(profiles).length > 0) || (transactions && JSON.parse(transactions).length > 0);
-}
-
 initUsers();
 window.getCurrentUser = getCurrentUser;
 window.login = login;
 window.logout = logout;
 window.register = register;
-window.userHasData = userHasData;
