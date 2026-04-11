@@ -7,51 +7,40 @@
     </div>
 
     <!-- Tabela de transações -->
-    <div>
-        <h3>📋 Histórico de Transações</h3>
-        <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse: collapse;">
-                <thead><tr style="border-bottom:1px solid #ddd;">
-                    <th style="padding:12px; text-align:left;">Data</th>
-                    <th>Nome</th>
-                    <th>Perfil</th>
-                    <th>Valor</th>
-                    <th>Tipo</th>
-                    <th>Categoria</th>
-                </tr></thead>
-                <tbody id="transTableBody"><tr><td colspan="6">Carregando...</td></tr></tbody>
-            </table>
-        </div>
+    <h3>📋 Histórico de Transações</h3>
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse: collapse;">
+            <thead><tr style="border-bottom:1px solid #ddd;">
+                <th style="padding:12px; text-align:left;">Data</th>
+                <th>Nome</th>
+                <th>Perfil</th>
+                <th>Valor</th>
+                <th>Tipo</th>
+                <th>Categoria</th>
+            </tr></thead>
+            <tbody id="transTableBody"><tr><td colspan="6">Carregando...</td></tr></tbody>
+        </table>
     </div>
 </div>
 
-<!-- Modal para adicionar transação -->
+<!-- Modal -->
 <div id="transactionModal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
-    <div style="background:white; border-radius:32px; max-width:500px; width:90%; padding:24px; max-height:80vh; overflow-y:auto;">
-        <h3 style="margin-bottom:20px;">➕ Adicionar Transação</h3>
+    <div style="background:white; border-radius:32px; max-width:500px; width:90%; padding:24px;">
+        <h3 style="margin-bottom:20px;">➕ Nova Transação</h3>
         <div style="display:flex; flex-direction:column; gap:12px;">
-            <input type="text" id="newName" placeholder="Nome da transação" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
-            <select id="newType" style="padding:10px; border-radius:16px;">
-                <option value="entrada">Entrada (Receita)</option>
-                <option value="saida">Saída (Despesa)</option>
-            </select>
-            <input type="number" id="newValue" placeholder="Valor (R$)" step="0.01" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
-            <input type="date" id="newDate" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
-            <select id="newProfile" style="padding:10px; border-radius:16px;"></select>
-            <select id="newFixo" style="padding:10px; border-radius:16px;">
-                <option value="fixa">Fixa (recorrente)</option>
-                <option value="variavel">Variável</option>
-            </select>
-            <select id="newParc" style="padding:10px; border-radius:16px;">
-                <option value="avista">À vista</option>
-                <option value="parcelado">Parcelado</option>
-            </select>
-            <input type="number" id="newParcelas" placeholder="Nº parcelas" value="1" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
-            <input type="date" id="newVenc" placeholder="Vencimento" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
-            <input type="text" id="newCat" placeholder="Categoria (ex: Alimentação)" style="padding:10px; border:1px solid #ddd; border-radius:16px;">
-            <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:16px;">
-                <button id="cancelModalBtn" style="background:#e2e8f0; border:none; padding:10px 20px; border-radius:40px; cursor:pointer;">Cancelar</button>
-                <button id="saveTransBtn" style="background:#0000FF; color:white; border:none; padding:10px 20px; border-radius:40px; cursor:pointer;">Salvar</button>
+            <input type="text" id="newName" placeholder="Nome" style="padding:10px; border-radius:16px; border:1px solid #ddd;">
+            <select id="newType"><option value="entrada">Entrada</option><option value="saida">Saída</option></select>
+            <input type="number" id="newValue" placeholder="Valor" step="0.01">
+            <input type="date" id="newDate">
+            <select id="newProfile"></select>
+            <select id="newFixo"><option value="fixa">Fixa</option><option value="variavel">Variável</option></select>
+            <select id="newParc"><option value="avista">À vista</option><option value="parcelado">Parcelado</option></select>
+            <input type="number" id="newParcelas" placeholder="Nº parcelas" value="1">
+            <input type="date" id="newVenc" placeholder="Vencimento">
+            <input type="text" id="newCat" placeholder="Categoria">
+            <div style="display:flex; gap:12px; justify-content:flex-end;">
+                <button id="cancelModalBtn" style="background:#e2e8f0; border:none; padding:8px 16px; border-radius:40px;">Cancelar</button>
+                <button id="saveTransBtn" style="background:#0000FF; color:white; border:none; padding:8px 16px; border-radius:40px;">Salvar</button>
             </div>
         </div>
     </div>
@@ -103,7 +92,7 @@
             return;
         }
         tbody.innerHTML = transactions.map(t => `
-            <tr style="border-bottom:1px solid #eee;">
+            <tr>
                 <td style="padding:12px;">${t.data}</td>
                 <td><strong>${t.nome}</strong></td>
                 <td>${t.perfilNome}</td>
@@ -114,9 +103,7 @@
         `).join('');
     }
 
-    // Mostrar botão de adicionar apenas se perfil for Geral
     const adminArea = document.getElementById('adminArea');
-    const modal = document.getElementById('transactionModal');
     if (profileId === 'geral') {
         adminArea.style.display = 'block';
         loadProfiles();
@@ -124,17 +111,15 @@
         adminArea.style.display = 'none';
     }
 
-    // Abrir modal
+    const modal = document.getElementById('transactionModal');
     document.getElementById('showModalBtn')?.addEventListener('click', () => {
         modal.style.display = 'flex';
+        // Recarrega a lista de perfis para o select
+        loadProfiles();
     });
-
-    // Fechar modal
     document.getElementById('cancelModalBtn')?.addEventListener('click', () => {
         modal.style.display = 'none';
     });
-
-    // Salvar transação
     document.getElementById('saveTransBtn')?.addEventListener('click', () => {
         const nome = document.getElementById('newName').value.trim();
         const type = document.getElementById('newType').value;
@@ -147,7 +132,6 @@
         const parcelas = parseInt(document.getElementById('newParcelas').value) || 1;
         const venc = document.getElementById('newVenc').value || data;
         const cat = document.getElementById('newCat').value.trim() || 'Outros';
-
         if (!nome || isNaN(valor) || !data) {
             alert('Preencha nome, valor e data');
             return;
@@ -163,13 +147,13 @@
         saveTransactions(transactions);
         renderTransactions();
         modal.style.display = 'none';
-        // Limpar campos
+        // Limpa campos
         document.getElementById('newName').value = '';
         document.getElementById('newValue').value = '';
         document.getElementById('newDate').value = '';
         document.getElementById('newVenc').value = '';
         document.getElementById('newCat').value = '';
     });
-
     renderTransactions();
 </script>
+
