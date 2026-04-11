@@ -84,7 +84,12 @@
     </div>
 
     <script>
-        // Dados iniciais
+        // Verificar se está logado
+        const currentUser = localStorage.getItem('entregas_current_user');
+        if (!currentUser) {
+            window.location.href = 'login-entrega.html';
+        }
+
         let entregadores = [];
         let pedidos = [];
 
@@ -153,14 +158,12 @@
                         <tbody>
                             ${pedidos.map(p => {
                                 const entregador = entregadores.find(e => e.id === p.entregadorId);
-                                return `
-                                    <tr>
-                                        <td>${p.cliente}</td><td>${p.endereco}</td><td>R$ ${p.valor.toFixed(2)}</td>
-                                        <td>${entregador ? entregador.nome : 'Não atribuído'}</td>
-                                        <td>${p.status}</td><td>${p.data || '-'}</td>
-                                        <td><button class="btn-sm btn-danger delete-ped" data-id="${p.id}">Excluir</button></td>
-                                    </tr>
-                                `;
+                                return `<tr>
+                                    <td>${p.cliente}</td><td>${p.endereco}</td><td>R$ ${p.valor.toFixed(2)}</td>
+                                    <td>${entregador ? entregador.nome : 'Não atribuído'}</td>
+                                    <td>${p.status}</td><td>${p.data || '-'}</td>
+                                    <td><button class="btn-sm btn-danger delete-ped" data-id="${p.id}">Excluir</button></td>
+                                </tr>`;
                             }).join('')}
                         </tbody>
                     </table>
@@ -204,7 +207,6 @@
             document.getElementById('tabContent').innerHTML = html;
         }
 
-        // Modais
         function openEntregadorModal() {
             const modal = document.getElementById('entregadorModal');
             modal.style.display = 'flex';
@@ -253,7 +255,6 @@
             document.getElementById('cancelPedBtn').onclick = () => modal.style.display = 'none';
         }
 
-        // Navegação das abas
         function switchTab(tabId) {
             if (tabId === 'entregadores') renderEntregadores();
             else if (tabId === 'pedidos') renderPedidos();
