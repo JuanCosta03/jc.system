@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Entregas VIP</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F0F5FF, #E8EFFF);
+            padding: 20px;
+        }
+        .login-card {
+            max-width: 450px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+        }
+        .login-card h1 { text-align: center; margin-bottom: 8px; }
+        .login-card p { text-align: center; color: var(--gray-medium); margin-bottom: 32px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; }
+        .btn-login { width: 100%; padding: 12px; background: #0000FF; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .register-link { text-align: center; margin-top: 24px; }
+        .message { margin-top: 16px; padding: 12px; border-radius: 12px; text-align: center; }
+        .error { background: #FEE2E2; color: #DC2626; }
+        .success { background: #D1FAE5; color: #059669; }
+        .test-accounts { margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 12px; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <h1>Entregas VIP</h1>
+            <p>Faça login para gerenciar entregas e entregadores</p>
+            <form id="loginForm">
+                <div class="form-group"><label>E-mail</label><input type="email" id="email" required placeholder="admin@entregas.com"></div>
+                <div class="form-group"><label>Senha</label><input type="password" id="password" required placeholder="••••••"></div>
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+            <div class="register-link">Não tem conta? <a href="register-entrega.html">Cadastre-se</a></div>
+            <div id="message"></div>
+            <div class="test-accounts">
+                <strong>🔐 Conta de teste</strong><br>
+                admin@entregas.com / admin123
+            </div>
+        </div>
+    </div>
+    <script>
+        // Autenticação simples para demonstração (usa localStorage)
+        const USERS_KEY = 'entregas_users';
+        const CURRENT_USER_KEY = 'entregas_current_user';
+
+        function initUsers() {
+            let users = localStorage.getItem(USERS_KEY);
+            if (!users) {
+                const testUsers = [
+                    { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' }
+                ];
+                localStorage.setItem(USERS_KEY, JSON.stringify(testUsers));
+            }
+        }
+
+        function login(email, password) {
+            const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+                return user;
+            }
+            return null;
+        }
+
+        initUsers();
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const user = login(email, password);
+            const msgDiv = document.getElementById('message');
+            if (user) {
+                msgDiv.className = 'message success';
+                msgDiv.textContent = 'Login realizado! Redirecionando...';
+                setTimeout(() => { window.location.href = 'dashboard-entrega.html'; }, 1000);
+            } else {
+                msgDiv.className = 'message error';
+                msgDiv.textContent = 'E-mail ou senha inválidos';
+            }
+        });
+    </script>
+</body>
+</html>
