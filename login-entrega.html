@@ -24,7 +24,7 @@
             box-shadow: 0 20px 35px rgba(0,0,0,0.1);
         }
         .login-card h1 { text-align: center; margin-bottom: 8px; }
-        .login-card p { text-align: center; color: var(--gray-medium); margin-bottom: 32px; }
+        .login-card p { text-align: center; color: #6b7280; margin-bottom: 32px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
         .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; }
@@ -42,7 +42,7 @@
             <h1>Entregas VIP</h1>
             <p>Faça login para gerenciar entregas e entregadores</p>
             <form id="loginForm">
-                <div class="form-group"><label>E-mail</label><input type="email" id="email" required placeholder="admin@entregas.com"></div>
+                <div class="form-group"><label>E-mail</label><input type="email" id="email" required placeholder="seu@email.com"></div>
                 <div class="form-group"><label>Senha</label><input type="password" id="password" required placeholder="••••••"></div>
                 <button type="submit" class="btn-login">Entrar</button>
             </form>
@@ -59,46 +59,52 @@
         const USERS_KEY = 'entregas_users';
         const CURRENT_USER_KEY = 'entregas_current_user';
 
+        // Função para inicializar usuários (garante que a conta desejada exista)
         function initUsers() {
             let users = localStorage.getItem(USERS_KEY);
-            let usersArray = users ? JSON.parse(users) : [];
-            
-            // Contas padrão
-            const defaultUsers = [
+            let usersArray = [];
+            if (users) {
+                usersArray = JSON.parse(users);
+            }
+            // Lista de contas que devem existir
+            const requiredUsers = [
                 { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
                 { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
             ];
-            
             let updated = false;
-            for (const defUser of defaultUsers) {
-                if (!usersArray.some(u => u.email === defUser.email)) {
-                    usersArray.push(defUser);
+            for (const req of requiredUsers) {
+                const exists = usersArray.some(u => u.email === req.email);
+                if (!exists) {
+                    usersArray.push(req);
                     updated = true;
                 } else {
-                    // Se existe, garantir que a senha esteja correta
-                    const existing = usersArray.find(u => u.email === defUser.email);
-                    if (existing.password !== defUser.password) {
-                        existing.password = defUser.password;
+                    // Se existe, garantir que a senha esteja correta (caso tenha sido alterada)
+                    const index = usersArray.findIndex(u => u.email === req.email);
+                    if (usersArray[index].password !== req.password) {
+                        usersArray[index].password = req.password;
                         updated = true;
                     }
                 }
             }
             if (updated) {
                 localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
-                console.log('Contas de teste atualizadas/inseridas');
             }
         }
 
         function login(email, password) {
+            console.log('Tentando login:', email);
             const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
             const user = users.find(u => u.email === email && u.password === password);
             if (user) {
                 localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+                console.log('Login bem-sucedido:', user.email);
                 return user;
             }
+            console.log('Login falhou');
             return null;
         }
 
+        // Inicializa e força a criação da conta
         initUsers();
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -119,4 +125,3 @@
     </script>
 </body>
 </html>
-
