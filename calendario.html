@@ -16,7 +16,7 @@
             border-radius: 28px;
             padding: 20px;
         }
-        .calendario-header {
+        .cal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -57,7 +57,7 @@
             height: 14px;
             border-radius: 50%;
         }
-        .calendario-tabela {
+        .cal-table-wrapper {
             overflow-x: auto;
             margin-top: 20px;
         }
@@ -78,7 +78,6 @@
             font-weight: 600;
             position: sticky;
             top: 0;
-            background-color: #f1f5f9;
         }
         .mes-coluna {
             background: #eef2ff;
@@ -96,7 +95,7 @@
         .a-vencer { background-color: #f39c12; }
         .atrasado { background-color: #c62828; }
         .sem-dia { background-color: transparent; }
-        .rodape-obs {
+        .rodape {
             margin-top: 20px;
             text-align: center;
             font-size: 12px;
@@ -109,7 +108,7 @@
     </style>
 </head>
 <body>
-    <div class="calendario-header">
+    <div class="cal-header">
         <div class="ano-selector">
             <label>📅 Ano:</label>
             <select id="anoSelect"></select>
@@ -122,10 +121,10 @@
             <div class="legenda-item"><div class="legenda-cor atrasado"></div><span>Atrasado</span></div>
         </div>
     </div>
-    <div class="calendario-tabela" id="calendarioContainer">
+    <div class="cal-table-wrapper" id="calendarioContainer">
         <div style="text-align:center; padding:40px;">Carregando calendário...</div>
     </div>
-    <div class="rodape-obs">
+    <div class="rodape">
         * Cores baseadas nas transações do perfil selecionado.
     </div>
 
@@ -176,7 +175,6 @@
 
         function renderCalendarioAnual(ano) {
             const transactions = getTransactions();
-            // Filtrar pelo perfil selecionado
             const filtered = profileId === 'geral' ? transactions : transactions.filter(t => t.perfilId === profileId);
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -187,7 +185,7 @@
             for (let m = 0; m < 12; m++) {
                 diasPorMes.push(new Date(ano, m+1, 0).getDate());
             }
-            const maxDias = Math.max(...diasPorMes);
+            const maxDias = Math.max(...diasPorMes); // 31
 
             let html = '<table><thead><tr><th>Dia</th>';
             for (let m = 0; m < 12; m++) {
@@ -221,6 +219,7 @@
             const select = document.getElementById('anoSelect');
             if (!select) return;
             select.innerHTML = '';
+            // Anos de 2015 até anoAtual + 5
             for (let ano = 2015; ano <= anoAtual + 5; ano++) {
                 const option = document.createElement('option');
                 option.value = ano;
