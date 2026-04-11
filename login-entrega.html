@@ -61,20 +61,31 @@
 
         function initUsers() {
             let users = localStorage.getItem(USERS_KEY);
-            if (!users) {
-                const testUsers = [
-                    { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
-                    { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
-                ];
-                localStorage.setItem(USERS_KEY, JSON.stringify(testUsers));
-            } else {
-                // Garantir que a conta jc-system@hotmail.com exista
-                let usersArray = JSON.parse(users);
-                const exists = usersArray.some(u => u.email === 'jc-system@hotmail.com');
-                if (!exists) {
-                    usersArray.push({ id: Date.now().toString(), name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' });
-                    localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
+            let usersArray = users ? JSON.parse(users) : [];
+            
+            // Contas padrão
+            const defaultUsers = [
+                { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
+                { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
+            ];
+            
+            let updated = false;
+            for (const defUser of defaultUsers) {
+                if (!usersArray.some(u => u.email === defUser.email)) {
+                    usersArray.push(defUser);
+                    updated = true;
+                } else {
+                    // Se existe, garantir que a senha esteja correta
+                    const existing = usersArray.find(u => u.email === defUser.email);
+                    if (existing.password !== defUser.password) {
+                        existing.password = defUser.password;
+                        updated = true;
+                    }
                 }
+            }
+            if (updated) {
+                localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
+                console.log('Contas de teste atualizadas/inseridas');
             }
         }
 
@@ -108,3 +119,4 @@
     </script>
 </body>
 </html>
+
