@@ -1,33 +1,22 @@
 <div>
-    <!-- Botão para abrir modal (apenas para perfil Geral) -->
     <div id="adminArea" style="display: none; margin-bottom: 24px; text-align: right;">
         <button id="showModalBtn" style="background:#0000FF; color:white; border:none; padding:10px 20px; border-radius:40px; cursor:pointer;">
             <i class="fas fa-plus"></i> Nova Transação
         </button>
     </div>
-
-    <!-- Tabela de transações -->
     <h3>📋 Histórico de Transações</h3>
     <div style="overflow-x:auto;">
         <table style="width:100%; border-collapse: collapse;">
-            <thead><tr style="border-bottom:1px solid #ddd;">
-                <th style="padding:12px; text-align:left;">Data</th>
-                <th>Nome</th>
-                <th>Perfil</th>
-                <th>Valor</th>
-                <th>Tipo</th>
-                <th>Categoria</th>
-            </tr></thead>
+            <thead><tr><th>Data</th><th>Nome</th><th>Perfil</th><th>Valor</th><th>Tipo</th><th>Categoria</th></tr></thead>
             <tbody id="transTableBody"><tr><td colspan="6">Carregando...</td></tr></tbody>
         </table>
     </div>
 </div>
 
-<!-- Modal -->
 <div id="transactionModal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
     <div style="background:white; border-radius:32px; max-width:500px; width:90%; padding:24px;">
-        <h3 style="margin-bottom:20px;">➕ Nova Transação</h3>
-        <div style="display:flex; flex-direction:column; gap:12px;">
+        <h3>➕ Nova Transação</h3>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
             <input type="text" id="newName" placeholder="Nome" style="padding:10px; border-radius:16px; border:1px solid #ddd;">
             <select id="newType"><option value="entrada">Entrada</option><option value="saida">Saída</option></select>
             <input type="number" id="newValue" placeholder="Valor" step="0.01">
@@ -38,7 +27,7 @@
             <input type="number" id="newParcelas" placeholder="Nº parcelas" value="1">
             <input type="date" id="newVenc" placeholder="Vencimento">
             <input type="text" id="newCat" placeholder="Categoria">
-            <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:16px;">
                 <button id="cancelModalBtn" style="background:#e2e8f0; border:none; padding:8px 16px; border-radius:40px;">Cancelar</button>
                 <button id="saveTransBtn" style="background:#0000FF; color:white; border:none; padding:8px 16px; border-radius:40px;">Salvar</button>
             </div>
@@ -93,7 +82,7 @@
         }
         tbody.innerHTML = transactions.map(t => `
             <tr>
-                <td style="padding:12px;">${t.data}</td>
+                <td>${t.data}</td>
                 <td><strong>${t.nome}</strong></td>
                 <td>${t.perfilNome}</td>
                 <td style="color:${t.type==='entrada'?'green':'red'}">R$ ${t.valor.toFixed(2)}</td>
@@ -103,19 +92,17 @@
         `).join('');
     }
 
-    const adminArea = document.getElementById('adminArea');
     if (profileId === 'geral') {
-        adminArea.style.display = 'block';
+        document.getElementById('adminArea').style.display = 'block';
         loadProfiles();
     } else {
-        adminArea.style.display = 'none';
+        document.getElementById('adminArea').style.display = 'none';
     }
 
     const modal = document.getElementById('transactionModal');
     document.getElementById('showModalBtn')?.addEventListener('click', () => {
         modal.style.display = 'flex';
-        // Recarrega a lista de perfis para o select
-        loadProfiles();
+        loadProfiles(); // atualiza lista de perfis no modal
     });
     document.getElementById('cancelModalBtn')?.addEventListener('click', () => {
         modal.style.display = 'none';
@@ -147,7 +134,6 @@
         saveTransactions(transactions);
         renderTransactions();
         modal.style.display = 'none';
-        // Limpa campos
         document.getElementById('newName').value = '';
         document.getElementById('newValue').value = '';
         document.getElementById('newDate').value = '';
@@ -156,4 +142,3 @@
     });
     renderTransactions();
 </script>
-
