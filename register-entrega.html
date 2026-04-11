@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro | Entregas VIP</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .register-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F0F5FF, #E8EFFF);
+            padding: 20px;
+        }
+        .register-card {
+            max-width: 500px;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; }
+        .btn-register { width: 100%; padding: 12px; background: #0000FF; color: white; border: none; border-radius: 12px; font-weight: 600; }
+        .message { margin-top: 16px; padding: 12px; border-radius: 12px; text-align: center; }
+        .error { background: #FEE2E2; color: #DC2626; }
+        .success { background: #D1FAE5; color: #059669; }
+    </style>
+</head>
+<body>
+    <div class="register-wrapper">
+        <div class="register-card">
+            <h1>Criar Conta Entregas VIP</h1>
+            <p>Cadastre-se para gerenciar entregas</p>
+            <form id="registerForm">
+                <div class="form-group"><input type="text" id="name" placeholder="Nome completo" required></div>
+                <div class="form-group"><input type="email" id="email" placeholder="E-mail" required></div>
+                <div class="form-group"><input type="password" id="password" placeholder="Senha (mínimo 6 caracteres)" required></div>
+                <div class="form-group"><input type="password" id="confirm" placeholder="Confirmar senha" required></div>
+                <button type="submit" class="btn-register">Criar conta</button>
+            </form>
+            <div id="message"></div>
+            <div style="text-align:center; margin-top:20px;"><a href="login-entrega.html">Já tem conta? Faça login</a></div>
+        </div>
+    </div>
+    <script>
+        const USERS_KEY = 'entregas_users';
+        function register(email, password, name) {
+            let users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+            if (users.find(u => u.email === email)) return null;
+            const newUser = { id: Date.now().toString(), name, email, password, role: 'admin' };
+            users.push(newUser);
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            localStorage.setItem('entregas_current_user', JSON.stringify(newUser));
+            return newUser;
+        }
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const pwd = document.getElementById('password').value;
+            const confirm = document.getElementById('confirm').value;
+            if (!name || !email || !pwd) return showMessage('Preencha todos os campos', 'error');
+            if (pwd !== confirm) return showMessage('Senhas não coincidem', 'error');
+            if (pwd.length < 6) return showMessage('Senha deve ter pelo menos 6 caracteres', 'error');
+            const user = register(email, pwd, name);
+            if (user) {
+                showMessage('Cadastro realizado! Redirecionando...', 'success');
+                setTimeout(() => { window.location.href = 'dashboard-entrega.html'; }, 1500);
+            } else {
+                showMessage('E-mail já cadastrado', 'error');
+            }
+        });
+        function showMessage(msg, type) {
+            const div = document.getElementById('message');
+            div.textContent = msg;
+            div.className = `message ${type}`;
+            setTimeout(() => div.innerHTML = '', 3000);
+        }
+    </script>
+</body>
+</html>
