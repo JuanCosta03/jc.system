@@ -34,6 +34,7 @@
         .error { background: #FEE2E2; color: #DC2626; }
         .success { background: #D1FAE5; color: #059669; }
         .test-accounts { margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 12px; font-size: 13px; text-align: center; }
+        .reset-btn { margin-top: 16px; background: #f0f2f5; border: 1px solid #ddd; padding: 8px; border-radius: 40px; width: 100%; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -53,47 +54,29 @@
                 admin@entregas.com / admin123<br>
                 jc-system@hotmail.com / Demo123
             </div>
+            <button id="resetDataBtn" class="reset-btn">🔄 Resetar Dados (limpar e recriar contas)</button>
         </div>
     </div>
     <script>
         const USERS_KEY = 'entregas_users';
         const CURRENT_USER_KEY = 'entregas_current_user';
 
-        // Função para inicializar usuários (garante que a conta desejada exista)
-        function initUsers() {
-            let users = localStorage.getItem(USERS_KEY);
-            let usersArray = [];
-            if (users) {
-                usersArray = JSON.parse(users);
-            }
-            // Lista de contas que devem existir
+        // Função para forçar a recriação das contas
+        function resetAndCreateUsers() {
+            console.log("Resetando dados de usuários...");
             const requiredUsers = [
                 { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
                 { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
             ];
-            let updated = false;
-            for (const req of requiredUsers) {
-                const exists = usersArray.some(u => u.email === req.email);
-                if (!exists) {
-                    usersArray.push(req);
-                    updated = true;
-                } else {
-                    // Se existe, garantir que a senha esteja correta (caso tenha sido alterada)
-                    const index = usersArray.findIndex(u => u.email === req.email);
-                    if (usersArray[index].password !== req.password) {
-                        usersArray[index].password = req.password;
-                        updated = true;
-                    }
-                }
-            }
-            if (updated) {
-                localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
-            }
+            localStorage.setItem(USERS_KEY, JSON.stringify(requiredUsers));
+            console.log("Usuários recriados:", requiredUsers);
+            alert("Dados resetados! Agora tente fazer login novamente.");
         }
 
         function login(email, password) {
             console.log('Tentando login:', email);
             const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+            console.log('Usuários no localStorage:', users);
             const user = users.find(u => u.email === email && u.password === password);
             if (user) {
                 localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
@@ -104,7 +87,38 @@
             return null;
         }
 
-        // Inicializa e força a criação da conta
+        // Inicialização: se não houver usuários, cria; senão, garante que as contas existam
+        function initUsers() {
+            let users = localStorage.getItem(USERS_KEY);
+            if (!users) {
+                resetAndCreateUsers();
+            } else {
+                let usersArray = JSON.parse(users);
+                const requiredUsers = [
+                    { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
+                    { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
+                ];
+                let updated = false;
+                for (const req of requiredUsers) {
+                    const exists = usersArray.some(u => u.email === req.email);
+                    if (!exists) {
+                        usersArray.push(req);
+                        updated = true;
+                    } else {
+                        const index = usersArray.findIndex(u => u.email === req.email);
+                        if (usersArray[index].password !== req.password) {
+                            usersArray[index].password = req.password;
+                            updated = true;
+                        }
+                    }
+                }
+                if (updated) {
+                    localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
+                    console.log("Usuários atualizados:", usersArray);
+                }
+            }
+        }
+
         initUsers();
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -121,6 +135,13 @@
                 msgDiv.className = 'message error';
                 msgDiv.textContent = 'E-mail ou senha inválidos';
             }
+        });
+
+        document.getElementById('resetDataBtn').addEventListener('click', function() {
+            resetAndCreateUsers();
+            // Limpar também o current user logado
+            localStorage.removeItem(CURRENT_USER_KEY);
+            document.getElementById('message').innerHTML = '';
         });
     </script>
 </body>
