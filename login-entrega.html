@@ -63,63 +63,45 @@
 
         // Função para forçar a recriação das contas
         function resetAndCreateUsers() {
-            console.log("Resetando dados de usuários...");
             const requiredUsers = [
                 { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
                 { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
             ];
             localStorage.setItem(USERS_KEY, JSON.stringify(requiredUsers));
-            console.log("Usuários recriados:", requiredUsers);
+            console.log("✅ Usuários recriados:", requiredUsers);
             alert("Dados resetados! Agora tente fazer login novamente.");
         }
 
         function login(email, password) {
-            console.log('Tentando login:', email);
             const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-            console.log('Usuários no localStorage:', users);
             const user = users.find(u => u.email === email && u.password === password);
             if (user) {
                 localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-                console.log('Login bem-sucedido:', user.email);
                 return user;
             }
-            console.log('Login falhou');
             return null;
         }
 
-        // Inicialização: se não houver usuários, cria; senão, garante que as contas existam
-        function initUsers() {
-            let users = localStorage.getItem(USERS_KEY);
-            if (!users) {
-                resetAndCreateUsers();
-            } else {
-                let usersArray = JSON.parse(users);
-                const requiredUsers = [
-                    { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
-                    { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
-                ];
-                let updated = false;
-                for (const req of requiredUsers) {
-                    const exists = usersArray.some(u => u.email === req.email);
-                    if (!exists) {
-                        usersArray.push(req);
-                        updated = true;
+        // Inicialização: se não houver usuários, cria
+        if (!localStorage.getItem(USERS_KEY)) {
+            resetAndCreateUsers();
+        } else {
+            // Verifica se as contas existem, senão adiciona
+            let users = JSON.parse(localStorage.getItem(USERS_KEY));
+            const required = ['admin@entregas.com', 'jc-system@hotmail.com'];
+            let updated = false;
+            for (let email of required) {
+                if (!users.find(u => u.email === email)) {
+                    if (email === 'admin@entregas.com') {
+                        users.push({ id: Date.now().toString(), name: 'Admin Entregas', email, password: 'admin123', role: 'admin' });
                     } else {
-                        const index = usersArray.findIndex(u => u.email === req.email);
-                        if (usersArray[index].password !== req.password) {
-                            usersArray[index].password = req.password;
-                            updated = true;
-                        }
+                        users.push({ id: Date.now().toString(), name: 'JC System', email, password: 'Demo123', role: 'admin' });
                     }
-                }
-                if (updated) {
-                    localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
-                    console.log("Usuários atualizados:", usersArray);
+                    updated = true;
                 }
             }
+            if (updated) localStorage.setItem(USERS_KEY, JSON.stringify(users));
         }
-
-        initUsers();
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -139,7 +121,6 @@
 
         document.getElementById('resetDataBtn').addEventListener('click', function() {
             resetAndCreateUsers();
-            // Limpar também o current user logado
             localStorage.removeItem(CURRENT_USER_KEY);
             document.getElementById('message').innerHTML = '';
         });
