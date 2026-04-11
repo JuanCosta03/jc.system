@@ -10,19 +10,19 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-container">
+        <div class="container nav-container">
             <a href="index.html" class="logo">
-                <div class="logo-icon"><i class="fas fa-cube"></i></div>
-                <span class="logo-text">JCSystem</span>
+                <i class="fas fa-cube"></i>
+                <span>JCSystem</span>
             </a>
             <ul class="nav-menu">
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link">Produtos <i class="fas fa-chevron-down"></i></a>
+                <li class="dropdown">
+                    <a href="#">Produtos <i class="fas fa-chevron-down"></i></a>
                     <div class="dropdown-menu">
                         <div class="dropdown-grid">
                             <div>
                                 <h4>Sistemas JCSystem</h4>
-                                <a href="#comercio-plus"><i class="fas fa-store"></i> Comércio+ Manager</a>
+                                <a href="#comercio"><i class="fas fa-store"></i> Comércio+ Manager</a>
                                 <a href="#"><i class="fas fa-industry"></i> Indústria+ Pro (em breve)</a>
                                 <a href="login-entrega.html"><i class="fas fa-truck"></i> Entregas VIP</a>
                             </div>
@@ -36,13 +36,13 @@
                         </div>
                     </div>
                 </li>
-                <li><a href="#solutions" class="nav-link">Soluções</a></li>
-                <li><a href="#features" class="nav-link">Recursos</a></li>
-                <li><a href="#pricing" class="nav-link">Preços</a></li>
-                <li><a href="#contact" class="nav-link">Contato</a></li>
+                <li><a href="#solutions">Soluções</a></li>
+                <li><a href="#features">Recursos</a></li>
+                <li><a href="#pricing">Preços</a></li>
+                <li><a href="#contact">Contato</a></li>
             </ul>
-            <div class="nav-actions">
-                <a href="login.html" class="btn-login">Entrar</a>
+            <div class="nav-buttons">
+                <a href="login.html" class="btn-outline">Entrar</a>
                 <a href="register.html" class="btn-primary">Testar Grátis</a>
                 <button class="menu-toggle"><i class="fas fa-bars"></i></button>
             </div>
@@ -51,32 +51,34 @@
 
     <!-- Hero -->
     <section class="hero">
-        <div class="hero-content">
-            <div class="hero-badge"><span class="badge-new">NOVO</span> Comércio+ Manager v2.0</div>
-            <h1>A Gestão Inteligente <span class="text-blue">que seu Negócio Merece</span></h1>
-            <p>Sistema completo para controlar vendas, estoque, finanças e lucros de qualquer tipo de empresa. Simples, poderoso e acessível.</p>
-            <div class="hero-buttons">
-                <a href="#" class="btn-primary">Ver Demonstração</a>
-                <a href="#pricing" class="btn-outline">Ver Planos</a>
+        <div class="container hero-container">
+            <div class="hero-text">
+                <div class="hero-badge"><span class="badge-new">NOVO</span> Comércio+ Manager v2.0</div>
+                <h1>A Gestão Inteligente <span class="blue-text">que seu Negócio Merece</span></h1>
+                <p>Sistema completo para controlar vendas, estoque, finanças e lucros de qualquer tipo de empresa. Simples, poderoso e acessível.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary">Ver Demonstração</a>
+                    <a href="#pricing" class="btn-outline">Ver Planos</a>
+                </div>
+                <div class="hero-stats">
+                    <div><strong>+200</strong><span>Empresas</span></div>
+                    <div><strong>99.9%</strong><span>Disponibilidade</span></div>
+                    <div><strong>24/7</strong><span>Suporte</span></div>
+                    <div><strong>R$0</strong><span>Instalação</span></div>
+                </div>
             </div>
-            <div class="hero-stats">
-                <div><strong>+200</strong><span>Empresas</span></div>
-                <div><strong>99.9%</strong><span>Disponibilidade</span></div>
-                <div><strong>24/7</strong><span>Suporte</span></div>
-                <div><strong>R$0</strong><span>Instalação</span></div>
-            </div>
-        </div>
-        <div class="hero-visual">
-            <div class="floating-screens">
-                <div class="screen"></div>
-                <div class="screen"></div>
-                <div class="screen"></div>
+            <div class="hero-image">
+                <div class="floating-screens">
+                    <div class="screen"></div>
+                    <div class="screen"></div>
+                    <div class="screen"></div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Soluções -->
-    <section id="solutions" class="section-solutions">
+    <section id="solutions" class="solutions">
         <div class="container">
             <div class="section-header">
                 <span class="tag">SOLUÇÕES COMPLETAS</span>
@@ -97,14 +99,14 @@
                 </div>
                 <div class="solution-card coming-soon">
                     <div class="card-icon"><i class="fas fa-industry"></i></div>
-                    <span class="badge-soon">EM BREVE</span>
+                    <span class="soon-badge">EM BREVE</span>
                     <h3>Indústria+ Pro</h3>
                     <p>Controle de produção, qualidade e logística.</p>
                     <button disabled>Avise-me</button>
                 </div>
                 <div class="solution-card coming-soon">
                     <div class="card-icon"><i class="fas fa-utensils"></i></div>
-                    <span class="badge-soon">EM BREVE</span>
+                    <span class="soon-badge">EM BREVE</span>
                     <h3>Restaurante+</h3>
                     <p>Comandas digitais, delivery integrado.</p>
                     <button disabled>Avise-me</button>
@@ -124,8 +126,8 @@
         </div>
     </section>
 
-    <!-- Recursos (Tabs) -->
-    <section id="features" class="section-features">
+    <!-- Recursos (tabs) -->
+    <section id="features" class="features">
         <div class="container">
             <div class="section-header">
                 <span class="tag">RECURSOS AVANÇADOS</span>
@@ -134,23 +136,31 @@
             <div class="tabs-wrapper">
                 <div class="tabs-header">
                     <button class="tab-btn active" data-tab="fin">Financeiro Inteligente</button>
-                    <button class="tab-btn" data-tab="vendas">Vendas & PDV</button>
-                    <button class="tab-btn" data-tab="estoque">Controle de Estoque</button>
+                    <button class="tab-btn" data-tab="sales">Vendas & PDV</button>
+                    <button class="tab-btn" data-tab="stock">Controle de Estoque</button>
                 </div>
                 <div class="tabs-content">
                     <div class="tab-pane active" id="fin">
                         <div class="feature-grid">
-                            <div><h3>Cálculo Inteligente de Lucro</h3><p>Nosso sistema separa reinvestimento, impostos e custos operacionais.</p><ul><li><strong>Reinvestimento</strong> – para recomprar produtos</li><li><strong>Impostos</strong> – automático por venda</li><li><strong>Lucro Real</strong> – o que sobra para você</li></ul></div>
+                            <div>
+                                <h3>Cálculo Inteligente de Lucro</h3>
+                                <p>Nosso sistema separa reinvestimento, impostos e custos operacionais.</p>
+                                <ul>
+                                    <li><strong>Reinvestimento</strong> – para recomprar produtos</li>
+                                    <li><strong>Impostos</strong> – automático por venda</li>
+                                    <li><strong>Lucro Real</strong> – o que sobra para você</li>
+                                </ul>
+                            </div>
                             <div class="feature-chart"><div class="bar-chart"><div style="height:60%"></div><div style="height:80%"></div><div style="height:45%"></div><div style="height:90%"></div></div></div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="vendas">
+                    <div class="tab-pane" id="sales">
                         <div class="feature-grid">
                             <div><h3>Sistema de Vendas Completo</h3><p>PDV integrado, múltiplas formas de pagamento, nota fiscal eletrônica e controle de comissões.</p></div>
                             <div class="feature-chart"><div class="sales-mock"><div>Vinho Premium <span>R$ 140,00</span></div><div>Queijo Especial <span>R$ 55,00</span></div><div class="total">Total: R$ 195,00</div></div></div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="estoque">
+                    <div class="tab-pane" id="stock">
                         <div class="feature-grid"><div><h3>Controle de Estoque</h3><p>Alertas de reposição, inventário periódico, código de barras e relatórios de giro.</p></div></div>
                     </div>
                 </div>
@@ -159,7 +169,7 @@
     </section>
 
     <!-- Preços -->
-    <section id="pricing" class="section-pricing">
+    <section id="pricing" class="pricing">
         <div class="container">
             <div class="section-header">
                 <span class="tag">PLANOS</span>
@@ -193,7 +203,7 @@
     </section>
 
     <!-- Contato -->
-    <section id="contact" class="section-contact">
+    <section id="contact" class="contact">
         <div class="container">
             <div class="contact-box">
                 <h2>Pronto para transformar sua gestão?</h2>
@@ -213,5 +223,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-
