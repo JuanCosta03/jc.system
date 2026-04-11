@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendário Anual | JCSystem</title>
+    <title>Calendário Anual</title>
     <style>
         * {
             margin: 0;
@@ -11,7 +11,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: white;
             border-radius: 28px;
             padding: 20px;
@@ -25,19 +25,17 @@
             gap: 16px;
         }
         .ano-selector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
             background: #f0f2f5;
             padding: 8px 20px;
             border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         .ano-selector select {
             padding: 8px 16px;
             border-radius: 30px;
             border: 1px solid #ddd;
-            background: white;
-            font-weight: 500;
             font-size: 16px;
         }
         .legendas {
@@ -45,6 +43,7 @@
             gap: 20px;
             flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 20px;
         }
         .legenda-item {
             display: flex;
@@ -57,9 +56,8 @@
             height: 14px;
             border-radius: 50%;
         }
-        .cal-table-wrapper {
+        .tabela-wrapper {
             overflow-x: auto;
-            margin-top: 20px;
         }
         table {
             width: 100%;
@@ -71,17 +69,10 @@
             border: 1px solid #e2e8f0;
             padding: 8px 4px;
             text-align: center;
-            vertical-align: middle;
         }
         th {
-            background: #f8fafc;
+            background: #f1f5f9;
             font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-        .mes-coluna {
-            background: #eef2ff;
-            font-weight: 700;
         }
         .status-bolinha {
             width: 20px;
@@ -101,16 +92,12 @@
             font-size: 12px;
             color: #6c757d;
         }
-        @media (max-width: 768px) {
-            th, td { padding: 4px 2px; font-size: 10px; }
-            .status-bolinha { width: 14px; height: 14px; }
-        }
     </style>
 </head>
 <body>
     <div class="cal-header">
         <div class="ano-selector">
-            <label>📅 Ano:</label>
+            <span>📅 Ano:</span>
             <select id="anoSelect"></select>
         </div>
         <div class="legendas">
@@ -121,19 +108,17 @@
             <div class="legenda-item"><div class="legenda-cor atrasado"></div><span>Atrasado</span></div>
         </div>
     </div>
-    <div class="cal-table-wrapper" id="calendarioContainer">
+    <div class="tabela-wrapper" id="tabelaWrapper">
         <div style="text-align:center; padding:40px;">Carregando calendário...</div>
     </div>
-    <div class="rodape">
-        * Cores baseadas nas transações do perfil selecionado.
-    </div>
+    <div class="rodape">* Cores baseadas nas transações do perfil selecionado.</div>
 
     <script>
-        // Obter perfil da URL (passado pelo dashboard)
+        // Obtém o perfil da URL (ex: ?profile=geral)
         const urlParams = new URLSearchParams(window.location.search);
         const profileId = urlParams.get('profile') || 'geral';
 
-        // Obter usuário atual
+        // Obtém o usuário atual
         let currentUser = null;
         if (typeof getCurrentUser !== 'undefined') {
             currentUser = getCurrentUser();
@@ -142,14 +127,17 @@
             currentUser = userStr ? JSON.parse(userStr) : null;
         }
         if (!currentUser) {
+            // Se não estiver logado, redireciona (mas não deve acontecer dentro do dashboard)
             window.location.href = 'login.html';
         }
 
+        // Função para obter transações do usuário
         function getTransactions() {
             const stored = localStorage.getItem(`transactions_${currentUser.id}`);
             return stored ? JSON.parse(stored) : [];
         }
 
+        // Determina o status de um dia baseado nas transações (filtradas pelo perfil)
         function getDayStatus(transactions, dateStr, today) {
             const dayTrans = transactions.filter(t => t.vencimento === dateStr);
             if (dayTrans.length === 0) return 'gray';
@@ -162,25 +150,29 @@
             return 'blue';
         }
 
+        // Mapeia status para classe CSS
         function statusToClass(status) {
-            switch(status) {
-                case 'gray': return 'sem-evento';
-                case 'blue': return 'em-dia';
-                case 'green': return 'pago';
-                case 'orange': return 'a-vencer';
-                case 'red': return 'atrasado';
-                default: return 'sem-evento';
-            }
+            const map = {
+                'gray': 'sem-evento',
+                'blue': 'em-dia',
+                'green': 'pago',
+                'orange': 'a-vencer',
+                'red': 'atrasado'
+            };
+            return map[status] || 'sem-evento';
         }
 
-        function renderCalendarioAnual(ano) {
+        // Renderiza o calendário anual para o ano especificado
+        function renderCalendar(ano) {
             const transactions = getTransactions();
+            // Filtra transações pelo perfil selecionado
             const filtered = profileId === 'geral' ? transactions : transactions.filter(t => t.perfilId === profileId);
             const today = new Date();
             today.setHours(0,0,0,0);
 
             const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
             const mesesAbrev = meses.map(m => m.substring(0,3));
+            // Dias por mês
             const diasPorMes = [];
             for (let m = 0; m < 12; m++) {
                 diasPorMes.push(new Date(ano, m+1, 0).getDate());
@@ -194,10 +186,10 @@
             html += '</tr></thead><tbody>';
 
             for (let dia = 1; dia <= maxDias; dia++) {
-                html += `<tr><td style="font-weight:600; background:#f8fafc;">${dia}</td>`;
+                html += `<tr style="border-bottom:1px solid #e2e8f0;"><td style="font-weight:600; background:#f8fafc;">${dia}</td>`;
                 for (let mes = 0; mes < 12; mes++) {
                     if (dia > diasPorMes[mes]) {
-                        html += `<td class="dia-celula"><div class="status-bolinha sem-dia"></div></td>`;
+                        html += `<td><div class="status-bolinha sem-dia"></div></td>`;
                         continue;
                     }
                     const mesNum = mes + 1;
@@ -206,37 +198,38 @@
                     const dataStr = `${ano}-${mesStr}-${diaStr}`;
                     const status = getDayStatus(filtered, dataStr, today);
                     const classe = statusToClass(status);
-                    html += `<td class="dia-celula"><div class="status-bolinha ${classe}"></div></td>`;
+                    html += `<td><div class="status-bolinha ${classe}"></div></td>`;
                 }
                 html += '</tr>';
             }
             html += '</tbody></table>';
-            document.getElementById('calendarioContainer').innerHTML = html;
+            document.getElementById('tabelaWrapper').innerHTML = html;
         }
 
-        function preencherAnos() {
-            const anoAtual = new Date().getFullYear();
+        // Preenche o seletor de anos (de 2015 até ano atual + 5)
+        function populateYearSelect() {
             const select = document.getElementById('anoSelect');
             if (!select) return;
+            const currentYear = new Date().getFullYear();
             select.innerHTML = '';
-            // Anos de 2015 até anoAtual + 5
-            for (let ano = 2015; ano <= anoAtual + 5; ano++) {
+            for (let y = 2015; y <= currentYear + 5; y++) {
                 const option = document.createElement('option');
-                option.value = ano;
-                option.textContent = ano;
-                if (ano === anoAtual) option.selected = true;
+                option.value = y;
+                option.textContent = y;
+                if (y === currentYear) option.selected = true;
                 select.appendChild(option);
             }
             select.addEventListener('change', (e) => {
-                renderCalendarioAnual(parseInt(e.target.value));
+                renderCalendar(parseInt(e.target.value));
             });
-            renderCalendarioAnual(anoAtual);
+            renderCalendar(currentYear);
         }
 
+        // Inicializa quando o DOM estiver pronto
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', preencherAnos);
+            document.addEventListener('DOMContentLoaded', populateYearSelect);
         } else {
-            preencherAnos();
+            populateYearSelect();
         }
     </script>
 </body>
