@@ -55,6 +55,7 @@
             margin: 30px auto;
             padding: 0 24px;
         }
+        /* Perfis - cards redondos e sem corte */
         .profiles-section {
             margin-bottom: 40px;
             overflow: visible;
@@ -156,7 +157,6 @@
             background: #b71c1c;
             transform: scale(1.1);
         }
-        /* Esconde botão de excluir do perfil Geral */
         .profile-card[data-id="geral"] .delete-profile-btn {
             display: none;
         }
@@ -343,12 +343,12 @@
         <div id="tabContent" class="tab-content"><div class="loading">Carregando...</div></div>
     </div>
 
-    <!-- Modal de criação/edição de perfil -->
+    <!-- Modais -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle">Novo Perfil</h3>
-            <input type="text" id="profileName" placeholder="Nome do perfil (ex: João)">
-            <input type="text" id="profileRole" placeholder="Papel (ex: Pai, Filho)">
+            <input type="text" id="profileName" placeholder="Nome do perfil">
+            <input type="text" id="profileRole" placeholder="Papel (ex: Pai)">
             <div class="photo-options">
                 <button id="optFile" class="active">📁 Enviar arquivo</button>
                 <button id="optUrl">🌐 URL da web</button>
@@ -362,12 +362,11 @@
         </div>
     </div>
 
-    <!-- Modal de confirmação de exclusão -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
             <h3>Excluir Perfil</h3>
             <p>Tem certeza que deseja excluir o perfil <strong id="profileToDeleteName"></strong>?</p>
-            <p style="font-size:12px; color:#c62828;">Esta ação é irreversível e todas as transações associadas também serão removidas.</p>
+            <p style="font-size:12px; color:#c62828;">Todas as transações associadas serão removidas.</p>
             <div class="modal-buttons">
                 <button id="confirmDeleteBtn" class="btn-confirm">Excluir</button>
                 <button id="cancelDeleteBtn" class="btn-cancel">Cancelar</button>
@@ -377,17 +376,16 @@
 
     <script src="auth.js"></script>
     <script>
-        // ==================== VERIFICAÇÃO DE LOGIN ====================
+        // Verifica login
         let currentUser = getCurrentUser();
         if (!currentUser) window.location.href = 'login.html';
 
-        // ==================== DADOS ====================
         let profiles = [];
         let selectedProfileId = null;
         let currentEditingId = null;
         let currentPhotoMethod = 'file';
 
-        // ==================== FUNÇÕES DE PERSISTÊNCIA ====================
+        // Carrega perfis e garante o perfil "Geral"
         function loadProfiles() {
             const stored = localStorage.getItem(`profiles_${currentUser.id}`);
             if (stored) {
@@ -395,7 +393,6 @@
             } else {
                 profiles = [];
             }
-            // Garantir que o perfil "Geral" exista
             const generalExists = profiles.some(p => p.id === 'geral');
             if (!generalExists) {
                 profiles.unshift({
@@ -409,7 +406,6 @@
                 });
                 saveProfiles();
             } else {
-                // Marcar como geral se ainda não tiver a flag
                 const general = profiles.find(p => p.id === 'geral');
                 if (general) general.isGeneral = true;
             }
@@ -433,7 +429,7 @@
             localStorage.setItem(`transactions_${currentUser.id}`, JSON.stringify(transactions));
         }
 
-        // ==================== RENDERIZAR PERFIS ====================
+        // Renderiza os cards de perfil
         function renderProfiles() {
             const container = document.getElementById('profilesScroll');
             if (!container) return;
@@ -460,7 +456,7 @@
             `;
             container.innerHTML = html;
 
-            // Selecionar perfil
+            // Eventos
             document.querySelectorAll('.profile-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     if (e.target.classList.contains('delete-profile-btn') || e.target.classList.contains('edit-photo-btn')) return;
@@ -469,24 +465,16 @@
                     loadCurrentTab();
                 });
             });
-
-            // Excluir perfil (apenas não-geral)
             document.querySelectorAll('.delete-profile-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const profileId = btn.dataset.id;
-                    if (profileId === 'geral') {
-                        alert('O perfil Geral não pode ser excluído.');
-                        return;
-                    }
-                    const profileName = btn.dataset.name;
-                    document.getElementById('profileToDeleteName').innerText = profileName;
+                    if (profileId === 'geral') { alert('O perfil Geral não pode ser excluído.'); return; }
+                    document.getElementById('profileToDeleteName').innerText = btn.dataset.name;
                     document.getElementById('confirmModal').style.display = 'flex';
                     window.pendingDeleteId = profileId;
                 });
             });
-
-            // Editar foto
             document.querySelectorAll('.edit-photo-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -495,12 +483,10 @@
                     if (profile) openModal(profile);
                 });
             });
-
-            // Adicionar perfil
             document.getElementById('addProfileBtn')?.addEventListener('click', () => openModal());
         }
 
-        // ==================== MODAL DE CRIAÇÃO/EDIÇÃO ====================
+        // Modal de criação/edição
         function openModal(profile = null) {
             const modal = document.getElementById('profileModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -532,11 +518,6 @@
             modal.style.display = 'flex';
         }
 
-        function openEditPhotoModal(profile) {
-            openModal(profile);
-        }
-
-        // Alternar método de foto
         document.getElementById('optFile')?.addEventListener('click', () => {
             currentPhotoMethod = 'file';
             document.getElementById('optFile').classList.add('active');
@@ -552,20 +533,14 @@
             document.getElementById('urlInput').style.display = 'block';
         });
 
-        // Salvar perfil
         document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
             const name = document.getElementById('profileName').value.trim();
             const role = document.getElementById('profileRole').value.trim();
-            if (!name) {
-                alert('Digite um nome para o perfil');
-                return;
-            }
+            if (!name) { alert('Digite um nome'); return; }
             let photo = null;
             if (currentPhotoMethod === 'file') {
-                const fileInput = document.getElementById('fileInput');
-                if (fileInput.files && fileInput.files[0]) {
-                    photo = await readFileAsDataURL(fileInput.files[0]);
-                }
+                const file = document.getElementById('fileInput').files[0];
+                if (file) photo = await readFileAsDataURL(file);
             } else {
                 const url = document.getElementById('urlInput').value.trim();
                 if (url) photo = url;
@@ -607,14 +582,14 @@
         });
 
         function readFileAsDataURL(file) {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
+                reader.onload = e => resolve(e.target.result);
                 reader.readAsDataURL(file);
             });
         }
 
-        // ==================== MODAL DE EXCLUSÃO ====================
+        // Exclusão
         document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
             const profileId = window.pendingDeleteId;
             if (profileId && profileId !== 'geral') {
@@ -635,13 +610,14 @@
             document.getElementById('confirmModal').style.display = 'none';
         });
         window.onclick = (event) => {
-            const confirmModal = document.getElementById('confirmModal');
-            const profileModal = document.getElementById('profileModal');
-            if (event.target === confirmModal) confirmModal.style.display = 'none';
-            if (event.target === profileModal) profileModal.style.display = 'none';
+            const modals = ['confirmModal', 'profileModal'];
+            modals.forEach(id => {
+                const el = document.getElementById(id);
+                if (event.target === el) el.style.display = 'none';
+            });
         };
 
-        // ==================== CARREGAR ABAS ====================
+        // Carregar abas
         async function loadTabContent(tabId) {
             const contentDiv = document.getElementById('tabContent');
             contentDiv.innerHTML = '<div class="loading">Carregando...</div>';
@@ -651,7 +627,7 @@
             else if (tabId === 'calendario') url = 'calendario.html';
             try {
                 const response = await fetch(`${url}?profile=${selectedProfileId || ''}&_=${Date.now()}`);
-                if (!response.ok) throw new Error('HTTP ' + response.status);
+                if (!response.ok) throw new Error();
                 const html = await response.text();
                 contentDiv.innerHTML = html;
                 const scripts = contentDiv.querySelectorAll('script');
@@ -663,25 +639,18 @@
                 });
             } catch (error) {
                 if (profiles.length === 0) {
-                    contentDiv.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-user-plus" style="font-size:48px; color:#0000FF;"></i>
-                            <h3>Bem-vindo ao JCSystem!</h3>
-                            <p>Para começar, clique em "Adicionar Perfil" e crie o primeiro perfil da sua família.</p>
-                        </div>
-                    `;
+                    contentDiv.innerHTML = `<div class="empty-state"><i class="fas fa-user-plus" style="font-size:48px; color:#0000FF;"></i><h3>Bem-vindo!</h3><p>Clique em "Adicionar Perfil" para começar.</p></div>`;
                 } else {
-                    contentDiv.innerHTML = '<div class="loading">Erro ao carregar. Verifique os arquivos: visao-geral.html, transacoes.html, calendario.html</div>';
+                    contentDiv.innerHTML = '<div class="loading">Erro ao carregar a aba. Verifique os arquivos.</div>';
                 }
             }
         }
 
         function loadCurrentTab() {
-            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
-            loadTabContent(activeTab);
+            const active = document.querySelector('.tab-btn.active').dataset.tab;
+            loadTabContent(active);
         }
 
-        // ==================== EVENTOS DAS ABAS ====================
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -690,25 +659,13 @@
             });
         });
 
-        // ==================== LOGOUT ====================
-        document.getElementById('logoutBtn').onclick = () => {
-            logout();
-            window.location.href = 'index.html';
-        };
+        document.getElementById('logoutBtn').onclick = () => { logout(); window.location.href = 'index.html'; };
 
-        // ==================== INICIALIZAÇÃO ====================
         loadProfiles();
         renderProfiles();
-        if (profiles.length > 0) {
-            loadCurrentTab();
-        } else {
-            document.getElementById('tabContent').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-user-plus" style="font-size:48px; color:#0000FF;"></i>
-                    <h3>Bem-vindo ao JCSystem!</h3>
-                    <p>Para começar, clique em "Adicionar Perfil" e crie o primeiro perfil da sua família.</p>
-                </div>
-            `;
+        if (profiles.length > 0) loadCurrentTab();
+        else {
+            document.getElementById('tabContent').innerHTML = `<div class="empty-state"><i class="fas fa-user-plus" style="font-size:48px; color:#0000FF;"></i><h3>Bem-vindo ao JCSystem!</h3><p>Para começar, clique em "Adicionar Perfil".</p></div>`;
         }
     </script>
 </body>
