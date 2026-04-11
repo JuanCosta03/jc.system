@@ -43,237 +43,105 @@
         <div id="tabContent" class="tab-content">Carregando...</div>
     </div>
 
-    <!-- Modal para adicionar entregador -->
-    <div id="entregadorModal" class="modal">
-        <div class="modal-content">
-            <h3>➕ Adicionar Entregador</h3>
-            <div class="form-grid">
-                <input type="text" id="entNome" placeholder="Nome" class="form-input">
-                <input type="text" id="entTelefone" placeholder="Telefone" class="form-input">
-                <input type="text" id="entVeiculo" placeholder="Veículo" class="form-input">
-                <input type="text" id="entPlaca" placeholder="Placa" class="form-input">
-                <input type="number" id="entComissao" placeholder="Comissão por entrega (R$)" class="form-input" step="0.01">
-            </div>
-            <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px;">
-                <button id="cancelEntBtn" class="btn-sm" style="background:#ccc;">Cancelar</button>
-                <button id="saveEntBtn" class="btn-sm">Salvar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para adicionar pedido -->
-    <div id="pedidoModal" class="modal">
-        <div class="modal-content">
-            <h3>➕ Novo Pedido</h3>
-            <div class="form-grid">
-                <input type="text" id="pedCliente" placeholder="Cliente" class="form-input">
-                <input type="text" id="pedEndereco" placeholder="Endereço" class="form-input">
-                <input type="number" id="pedValor" placeholder="Valor (R$)" class="form-input" step="0.01">
-                <select id="pedEntregador" class="form-input"></select>
-                <select id="pedStatus" class="form-input">
-                    <option value="pendente">Pendente</option>
-                    <option value="entregue">Entregue</option>
-                    <option value="cancelado">Cancelado</option>
-                </select>
-            </div>
-            <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px;">
-                <button id="cancelPedBtn" class="btn-sm" style="background:#ccc;">Cancelar</button>
-                <button id="savePedBtn" class="btn-sm">Salvar</button>
-            </div>
-        </div>
-    </div>
+    <!-- Modais (mesmo código anterior) -->
+    <div id="entregadorModal" class="modal"><div class="modal-content"><h3>➕ Adicionar Entregador</h3><div class="form-grid"><input type="text" id="entNome" placeholder="Nome"><input type="text" id="entTelefone" placeholder="Telefone"><input type="text" id="entVeiculo" placeholder="Veículo"><input type="text" id="entPlaca" placeholder="Placa"><input type="number" id="entComissao" placeholder="Comissão (R$)" step="0.01"></div><div style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px;"><button id="cancelEntBtn" class="btn-sm" style="background:#ccc;">Cancelar</button><button id="saveEntBtn" class="btn-sm">Salvar</button></div></div></div>
+    <div id="pedidoModal" class="modal"><div class="modal-content"><h3>➕ Novo Pedido</h3><div class="form-grid"><input type="text" id="pedCliente" placeholder="Cliente"><input type="text" id="pedEndereco" placeholder="Endereço"><input type="number" id="pedValor" placeholder="Valor (R$)" step="0.01"><select id="pedEntregador"></select><select id="pedStatus"><option value="pendente">Pendente</option><option value="entregue">Entregue</option><option value="cancelado">Cancelado</option></select></div><div style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px;"><button id="cancelPedBtn" class="btn-sm" style="background:#ccc;">Cancelar</button><button id="savePedBtn" class="btn-sm">Salvar</button></div></div></div>
 
     <script>
-        // Verificar se está logado
         const currentUser = localStorage.getItem('entregas_current_user');
-        if (!currentUser) {
-            window.location.href = 'login-entrega.html';
-        }
+        if (!currentUser) window.location.href = 'login-entrega.html';
 
-        let entregadores = [];
-        let pedidos = [];
+        let entregadores = [], pedidos = [];
 
         function loadData() {
-            const storedEnt = localStorage.getItem('entregas_entregadores');
-            const storedPed = localStorage.getItem('entregas_pedidos');
-            entregadores = storedEnt ? JSON.parse(storedEnt) : [
-                { id: 1, nome: "Carlos Silva", telefone: "(11) 99999-1111", veiculo: "Moto", placa: "ABC-1234", comissao: 5.00, ativo: true },
-                { id: 2, nome: "Ana Souza", telefone: "(11) 99999-2222", veiculo: "Bicicleta", placa: "", comissao: 4.00, ativo: true }
-            ];
-            pedidos = storedPed ? JSON.parse(storedPed) : [
-                { id: 1, cliente: "João Santos", endereco: "Rua A, 123", valor: 25.00, entregadorId: 1, status: "entregue", data: "2025-03-10" },
-                { id: 2, cliente: "Maria Oliveira", endereco: "Rua B, 456", valor: 30.00, entregadorId: 2, status: "pendente", data: "2025-03-12" }
-            ];
-            saveData();
+            entregadores = JSON.parse(localStorage.getItem('entregas_entregadores') || '[]');
+            if (!entregadores.length) {
+                entregadores = [
+                    { id: 1, nome: "Carlos Silva", telefone: "(11) 99999-1111", veiculo: "Moto", placa: "ABC-1234", comissao: 5.00 },
+                    { id: 2, nome: "Ana Souza", telefone: "(11) 99999-2222", veiculo: "Bicicleta", placa: "", comissao: 4.00 }
+                ];
+                saveData();
+            }
+            pedidos = JSON.parse(localStorage.getItem('entregas_pedidos') || '[]');
+            if (!pedidos.length) {
+                pedidos = [
+                    { id: 1, cliente: "João Santos", endereco: "Rua A, 123", valor: 25.00, entregadorId: 1, status: "entregue", data: "2025-03-10" },
+                    { id: 2, cliente: "Maria Oliveira", endereco: "Rua B, 456", valor: 30.00, entregadorId: 2, status: "pendente", data: "2025-03-12" }
+                ];
+                saveData();
+            }
         }
-
-        function saveData() {
-            localStorage.setItem('entregas_entregadores', JSON.stringify(entregadores));
-            localStorage.setItem('entregas_pedidos', JSON.stringify(pedidos));
-        }
+        function saveData() { localStorage.setItem('entregas_entregadores', JSON.stringify(entregadores)); localStorage.setItem('entregas_pedidos', JSON.stringify(pedidos)); }
 
         function renderEntregadores() {
-            let html = `
-                <div class="card" style="text-align:right;">
-                    <button id="addEntregadorBtn" class="btn-sm"><i class="fas fa-plus"></i> Novo Entregador</button>
-                </div>
-                <div class="card">
-                    <h3>📋 Lista de Entregadores</h3>
-                    <table>
-                        <thead><tr><th>Nome</th><th>Telefone</th><th>Veículo</th><th>Placa</th><th>Comissão</th><th>Entregas</th><th>Ações</th></tr></thead>
-                        <tbody>
-                            ${entregadores.map(e => `
-                                <tr>
-                                    <td>${e.nome}</td><td>${e.telefone}</td><td>${e.veiculo}</td><td>${e.placa || '-'}</td>
-                                    <td>R$ ${e.comissao.toFixed(2)}</td>
-                                    <td>${pedidos.filter(p => p.entregadorId === e.id && p.status === 'entregue').length}</td>
-                                    <td><button class="btn-sm btn-danger delete-ent" data-id="${e.id}">Excluir</button></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            let html = `<div class="card" style="text-align:right;"><button id="addEntregadorBtn" class="btn-sm"><i class="fas fa-plus"></i> Novo Entregador</button></div><div class="card"><h3>📋 Lista de Entregadores</h3><table><thead><tr><th>Nome</th><th>Telefone</th><th>Veículo</th><th>Placa</th><th>Comissão</th><th>Entregas</th><th>Ações</th></tr></thead><tbody>${entregadores.map(e => `<tr><td>${e.nome}</td><td>${e.telefone}</td><td>${e.veiculo}</td><td>${e.placa || '-'}</td><td>R$ ${e.comissao.toFixed(2)}</td><td>${pedidos.filter(p => p.entregadorId === e.id && p.status === 'entregue').length}</td><td><button class="btn-sm btn-danger delete-ent" data-id="${e.id}">Excluir</button></td></tr>`).join('')}</tbody></table></div>`;
             document.getElementById('tabContent').innerHTML = html;
-            document.getElementById('addEntregadorBtn')?.addEventListener('click', () => openEntregadorModal());
-            document.querySelectorAll('.delete-ent').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = parseInt(btn.dataset.id);
-                    entregadores = entregadores.filter(e => e.id !== id);
-                    saveData();
-                    renderEntregadores();
-                });
-            });
+            document.getElementById('addEntregadorBtn')?.addEventListener('click', () => openModal('entregador'));
+            document.querySelectorAll('.delete-ent').forEach(btn => btn.addEventListener('click', () => { entregadores = entregadores.filter(e => e.id != btn.dataset.id); saveData(); renderEntregadores(); }));
         }
-
         function renderPedidos() {
-            let html = `
-                <div class="card" style="text-align:right;">
-                    <button id="addPedidoBtn" class="btn-sm"><i class="fas fa-plus"></i> Novo Pedido</button>
-                </div>
-                <div class="card">
-                    <h3>📦 Lista de Pedidos</h3>
-                    <table>
-                        <thead><tr><th>Cliente</th><th>Endereço</th><th>Valor</th><th>Entregador</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead>
-                        <tbody>
-                            ${pedidos.map(p => {
-                                const entregador = entregadores.find(e => e.id === p.entregadorId);
-                                return `<tr>
-                                    <td>${p.cliente}</td><td>${p.endereco}</td><td>R$ ${p.valor.toFixed(2)}</td>
-                                    <td>${entregador ? entregador.nome : 'Não atribuído'}</td>
-                                    <td>${p.status}</td><td>${p.data || '-'}</td>
-                                    <td><button class="btn-sm btn-danger delete-ped" data-id="${p.id}">Excluir</button></td>
-                                </tr>`;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            let html = `<div class="card" style="text-align:right;"><button id="addPedidoBtn" class="btn-sm"><i class="fas fa-plus"></i> Novo Pedido</button></div><div class="card"><h3>📦 Lista de Pedidos</h3><table><thead><tr><th>Cliente</th><th>Endereço</th><th>Valor</th><th>Entregador</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead><tbody>${pedidos.map(p => { const ent = entregadores.find(e => e.id === p.entregadorId); return `<tr><td>${p.cliente}</td><td>${p.endereco}</td><td>R$ ${p.valor.toFixed(2)}</td><td>${ent ? ent.nome : '-'}</td><td>${p.status}</td><td>${p.data || '-'}</td><td><button class="btn-sm btn-danger delete-ped" data-id="${p.id}">Excluir</button></td></tr>`; }).join('')}</tbody></table></div>`;
             document.getElementById('tabContent').innerHTML = html;
-            document.getElementById('addPedidoBtn')?.addEventListener('click', () => openPedidoModal());
-            document.querySelectorAll('.delete-ped').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = parseInt(btn.dataset.id);
-                    pedidos = pedidos.filter(p => p.id !== id);
-                    saveData();
-                    renderPedidos();
-                });
-            });
+            document.getElementById('addPedidoBtn')?.addEventListener('click', () => openModal('pedido'));
+            document.querySelectorAll('.delete-ped').forEach(btn => btn.addEventListener('click', () => { pedidos = pedidos.filter(p => p.id != btn.dataset.id); saveData(); renderPedidos(); }));
         }
-
         function renderRelatorios() {
             const totalEntregas = pedidos.filter(p => p.status === 'entregue').length;
-            const valorTotal = pedidos.filter(p => p.status === 'entregue').reduce((s, p) => s + p.valor, 0);
-            const comissoesPagas = pedidos.filter(p => p.status === 'entregue').reduce((s, p) => {
-                const ent = entregadores.find(e => e.id === p.entregadorId);
-                return s + (ent ? ent.comissao : 0);
-            }, 0);
-            const entregasPorEntregador = {};
-            pedidos.filter(p => p.status === 'entregue').forEach(p => {
-                const ent = entregadores.find(e => e.id === p.entregadorId);
-                if (ent) entregasPorEntregador[ent.nome] = (entregasPorEntregador[ent.nome] || 0) + 1;
-            });
-            let html = `
-                <div class="kpi-grid">
-                    <div class="card"><h3>📦 Total de Entregas</h3><div class="kpi-value">${totalEntregas}</div></div>
-                    <div class="card"><h3>💰 Faturamento</h3><div class="kpi-value">R$ ${valorTotal.toFixed(2)}</div></div>
-                    <div class="card"><h3>💵 Comissões Pagas</h3><div class="kpi-value">R$ ${comissoesPagas.toFixed(2)}</div></div>
-                </div>
-                <div class="card">
-                    <h3>🏆 Entregas por Entregador</h3>
-                    <ul>${Object.entries(entregasPorEntregador).map(([nome, qtd]) => `<li>${nome}: ${qtd} entregas</li>`).join('')}</ul>
-                </div>
-            `;
+            const valorTotal = pedidos.filter(p => p.status === 'entregue').reduce((s,p) => s + p.valor, 0);
+            const comissoes = pedidos.filter(p => p.status === 'entregue').reduce((s,p) => { const e = entregadores.find(e => e.id === p.entregadorId); return s + (e ? e.comissao : 0); }, 0);
+            const porEntregador = {};
+            pedidos.filter(p => p.status === 'entregue').forEach(p => { const e = entregadores.find(e => e.id === p.entregadorId); if(e) porEntregador[e.nome] = (porEntregador[e.nome] || 0) + 1; });
+            let html = `<div class="kpi-grid"><div class="card"><h3>📦 Total de Entregas</h3><div class="kpi-value">${totalEntregas}</div></div><div class="card"><h3>💰 Faturamento</h3><div class="kpi-value">R$ ${valorTotal.toFixed(2)}</div></div><div class="card"><h3>💵 Comissões Pagas</h3><div class="kpi-value">R$ ${comissoes.toFixed(2)}</div></div></div><div class="card"><h3>🏆 Entregas por Entregador</h3><ul>${Object.entries(porEntregador).map(([nome,qtd]) => `<li>${nome}: ${qtd} entregas</li>`).join('')}</ul></div>`;
             document.getElementById('tabContent').innerHTML = html;
         }
-
-        function openEntregadorModal() {
-            const modal = document.getElementById('entregadorModal');
-            modal.style.display = 'flex';
-            document.getElementById('saveEntBtn').onclick = () => {
-                const nome = document.getElementById('entNome').value.trim();
-                const telefone = document.getElementById('entTelefone').value.trim();
-                const veiculo = document.getElementById('entVeiculo').value.trim();
-                const placa = document.getElementById('entPlaca').value.trim();
-                const comissao = parseFloat(document.getElementById('entComissao').value);
-                if (!nome || !telefone || !veiculo || isNaN(comissao)) return alert('Preencha todos os campos');
-                const newId = entregadores.length ? Math.max(...entregadores.map(e => e.id)) + 1 : 1;
-                entregadores.push({ id: newId, nome, telefone, veiculo, placa, comissao, ativo: true });
-                saveData();
-                modal.style.display = 'none';
-                renderEntregadores();
-                document.getElementById('entNome').value = '';
-                document.getElementById('entTelefone').value = '';
-                document.getElementById('entVeiculo').value = '';
-                document.getElementById('entPlaca').value = '';
-                document.getElementById('entComissao').value = '';
-            };
-            document.getElementById('cancelEntBtn').onclick = () => modal.style.display = 'none';
+        function openModal(type) {
+            if (type === 'entregador') {
+                const modal = document.getElementById('entregadorModal');
+                modal.style.display = 'flex';
+                document.getElementById('saveEntBtn').onclick = () => {
+                    const nome = document.getElementById('entNome').value.trim();
+                    const telefone = document.getElementById('entTelefone').value.trim();
+                    const veiculo = document.getElementById('entVeiculo').value.trim();
+                    const placa = document.getElementById('entPlaca').value.trim();
+                    const comissao = parseFloat(document.getElementById('entComissao').value);
+                    if (!nome || !telefone || !veiculo || isNaN(comissao)) return alert('Preencha todos os campos');
+                    const newId = entregadores.length ? Math.max(...entregadores.map(e => e.id)) + 1 : 1;
+                    entregadores.push({ id: newId, nome, telefone, veiculo, placa, comissao });
+                    saveData();
+                    modal.style.display = 'none';
+                    renderEntregadores();
+                    ['entNome','entTelefone','entVeiculo','entPlaca','entComissao'].forEach(id => document.getElementById(id).value = '');
+                };
+                document.getElementById('cancelEntBtn').onclick = () => modal.style.display = 'none';
+            } else if (type === 'pedido') {
+                const modal = document.getElementById('pedidoModal');
+                const select = document.getElementById('pedEntregador');
+                select.innerHTML = entregadores.map(e => `<option value="${e.id}">${e.nome}</option>`).join('');
+                modal.style.display = 'flex';
+                document.getElementById('savePedBtn').onclick = () => {
+                    const cliente = document.getElementById('pedCliente').value.trim();
+                    const endereco = document.getElementById('pedEndereco').value.trim();
+                    const valor = parseFloat(document.getElementById('pedValor').value);
+                    const entregadorId = parseInt(document.getElementById('pedEntregador').value);
+                    const status = document.getElementById('pedStatus').value;
+                    if (!cliente || !endereco || isNaN(valor)) return alert('Preencha todos os campos');
+                    const newId = pedidos.length ? Math.max(...pedidos.map(p => p.id)) + 1 : 1;
+                    pedidos.push({ id: newId, cliente, endereco, valor, entregadorId, status, data: new Date().toISOString().slice(0,10) });
+                    saveData();
+                    modal.style.display = 'none';
+                    renderPedidos();
+                    ['pedCliente','pedEndereco','pedValor'].forEach(id => document.getElementById(id).value = '');
+                };
+                document.getElementById('cancelPedBtn').onclick = () => modal.style.display = 'none';
+            }
         }
-
-        function openPedidoModal() {
-            const modal = document.getElementById('pedidoModal');
-            const selectEnt = document.getElementById('pedEntregador');
-            selectEnt.innerHTML = entregadores.map(e => `<option value="${e.id}">${e.nome}</option>`).join('');
-            modal.style.display = 'flex';
-            document.getElementById('savePedBtn').onclick = () => {
-                const cliente = document.getElementById('pedCliente').value.trim();
-                const endereco = document.getElementById('pedEndereco').value.trim();
-                const valor = parseFloat(document.getElementById('pedValor').value);
-                const entregadorId = parseInt(document.getElementById('pedEntregador').value);
-                const status = document.getElementById('pedStatus').value;
-                if (!cliente || !endereco || isNaN(valor)) return alert('Preencha cliente, endereço e valor');
-                const newId = pedidos.length ? Math.max(...pedidos.map(p => p.id)) + 1 : 1;
-                pedidos.push({ id: newId, cliente, endereco, valor, entregadorId, status, data: new Date().toISOString().slice(0,10) });
-                saveData();
-                modal.style.display = 'none';
-                renderPedidos();
-                document.getElementById('pedCliente').value = '';
-                document.getElementById('pedEndereco').value = '';
-                document.getElementById('pedValor').value = '';
-            };
-            document.getElementById('cancelPedBtn').onclick = () => modal.style.display = 'none';
-        }
-
         function switchTab(tabId) {
             if (tabId === 'entregadores') renderEntregadores();
             else if (tabId === 'pedidos') renderPedidos();
             else if (tabId === 'relatorios') renderRelatorios();
         }
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                switchTab(btn.dataset.tab);
-            });
-        });
-
-        document.getElementById('logoutBtn').onclick = () => {
-            localStorage.removeItem('entregas_current_user');
-            window.location.href = 'login-entrega.html';
-        };
-
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); switchTab(btn.dataset.tab); }));
+        document.getElementById('logoutBtn').onclick = () => { localStorage.removeItem('entregas_current_user'); window.location.href = 'login-entrega.html'; };
         loadData();
         switchTab('entregadores');
     </script>
