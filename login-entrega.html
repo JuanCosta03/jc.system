@@ -49,13 +49,13 @@
             <div class="register-link">Não tem conta? <a href="register-entrega.html">Cadastre-se</a></div>
             <div id="message"></div>
             <div class="test-accounts">
-                <strong>🔐 Conta de teste</strong><br>
-                admin@entregas.com / admin123
+                <strong>🔐 Contas de teste</strong><br>
+                admin@entregas.com / admin123<br>
+                jc-system@hotmail.com / Demo123
             </div>
         </div>
     </div>
     <script>
-        // Autenticação simples para demonstração (usa localStorage)
         const USERS_KEY = 'entregas_users';
         const CURRENT_USER_KEY = 'entregas_current_user';
 
@@ -63,9 +63,18 @@
             let users = localStorage.getItem(USERS_KEY);
             if (!users) {
                 const testUsers = [
-                    { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' }
+                    { id: '1', name: 'Admin Entregas', email: 'admin@entregas.com', password: 'admin123', role: 'admin' },
+                    { id: '2', name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' }
                 ];
                 localStorage.setItem(USERS_KEY, JSON.stringify(testUsers));
+            } else {
+                // Garantir que a conta jc-system@hotmail.com exista
+                let usersArray = JSON.parse(users);
+                const exists = usersArray.some(u => u.email === 'jc-system@hotmail.com');
+                if (!exists) {
+                    usersArray.push({ id: Date.now().toString(), name: 'JC System', email: 'jc-system@hotmail.com', password: 'Demo123', role: 'admin' });
+                    localStorage.setItem(USERS_KEY, JSON.stringify(usersArray));
+                }
             }
         }
 
