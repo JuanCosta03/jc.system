@@ -3,172 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JCSystem | Gestão Inteligente</title>
+    <title>JCSystem | Sistemas Inteligentes de Gestão</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-    <!-- NAVBAR -->
+    <!-- Navbar -->
     <nav class="navbar">
-        <div class="container nav-container">
+        <div class="nav-container">
             <a href="index.html" class="logo">
-                <i class="fas fa-cube"></i>
-                <span>JCSystem</span>
+                <div class="logo-icon"><i class="fas fa-cube"></i></div>
+                <span class="logo-text">JCSystem</span>
             </a>
             <ul class="nav-menu">
-                <li class="dropdown">
-                    <a href="#">Produtos <i class="fas fa-chevron-down"></i></a>
-                    <div class="dropdown-menu">
-                        <div class="dropdown-grid">
-                            <div>
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><span>Produtos</span><i class="fas fa-chevron-down"></i></a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-content">
+                            <div class="mega-menu-section">
                                 <h4>Sistemas JCSystem</h4>
-                                <a href="#"><i class="fas fa-store"></i> Comércio+ Manager</a>
-                                <a href="#"><i class="fas fa-industry"></i> Indústria+ Pro (em breve)</a>
+                                <ul>
+                                    <li><a href="#comercio-plus"><i class="fas fa-store"></i><div><strong>Comércio+ Manager</strong><p>Gestão completa para qualquer negócio</p></div></a></li>
+                                    <li><a href="#"><i class="fas fa-industry"></i><div><strong>Indústria+ Pro</strong><p>Em breve - Sistema industrial</p></div></a></li>
+                                    <li><a href="#entregas-vip"><i class="fas fa-truck"></i><div><strong>Entregas VIP</strong><p>Gestão de entregadores e pedidos</p></div></a></li>
+                                </ul>
                             </div>
-                            <div>
+                            <div class="mega-menu-section">
                                 <h4>Por Empresa</h4>
-                                <a href="#"><i class="fas fa-wine-bottle"></i> Varejo</a>
-                                <a href="#"><i class="fas fa-utensils"></i> Restaurantes</a>
-                                <a href="#"><i class="fas fa-car"></i> Automotivo</a>
-                                <a href="#"><i class="fas fa-stethoscope"></i> Saúde</a>
+                                <ul>
+                                    <li><a href="#"><i class="fas fa-wine-bottle"></i> Varejo & Comércio</a></li>
+                                    <li><a href="#"><i class="fas fa-utensils"></i> Restaurantes</a></li>
+                                    <li><a href="#"><i class="fas fa-car"></i> Serviços Automotivos</a></li>
+                                    <li><a href="#"><i class="fas fa-stethoscope"></i> Saúde & Beleza</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </li>
-                <li><a href="#solucoes">Soluções</a></li>
-                <li><a href="#recursos">Recursos</a></li>
-                <li><a href="#precos">Preços</a></li>
-                <li><a href="#contato">Contato</a></li>
+                <li class="nav-item"><a href="#solutions" class="nav-link">Soluções</a></li>
+                <li class="nav-item"><a href="#features" class="nav-link">Recursos</a></li>
+                <li class="nav-item"><a href="#pricing" class="nav-link">Preços</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contato</a></li>
             </ul>
-            <div class="nav-buttons">
-                <a href="login.html" class="btn-outline">Entrar</a>
+            <div class="nav-actions">
+                <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i><span>Entrar</span></a>
                 <a href="register.html" class="btn-primary">Testar Grátis</a>
-                <button class="menu-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+                <button class="menu-toggle"><i class="fas fa-bars"></i></button>
             </div>
         </div>
     </nav>
 
-    <!-- HERO -->
+    <!-- Hero Section -->
     <section class="hero">
-        <div class="container hero-grid">
-            <div class="hero-text">
-                <div class="hero-badge">
-                    <span class="badge-new">NOVO</span> Comércio+ Manager v2.0
-                </div>
-                <h1>A Gestão Inteligente <span class="text-blue">que seu Negócio Merece</span></h1>
-                <p>Sistema completo para controlar vendas, estoque, finanças e lucros de qualquer tipo de empresa. Simples, poderoso e acessível.</p>
-                <div class="hero-buttons">
-                    <a href="#demo" class="btn-hero-primary"><i class="fas fa-play-circle"></i> Ver Demonstração</a>
-                    <a href="#precos" class="btn-hero-secondary"><i class="fas fa-tags"></i> Ver Planos</a>
-                </div>
-                <div class="hero-stats">
-                    <div><span class="stat-number">+200</span> <span class="stat-label">Empresas</span></div>
-                    <div><span class="stat-number">99.9%</span> <span class="stat-label">Disponibilidade</span></div>
-                    <div><span class="stat-number">24/7</span> <span class="stat-label">Suporte</span></div>
-                    <div><span class="stat-number">R$0</span> <span class="stat-label">Instalação</span></div>
-                </div>
+        <div class="hero-background"><div class="gradient-overlay"></div></div>
+        <div class="hero-content">
+            <div class="hero-badge"><span class="badge-new">NOVO</span><span>Comércio+ Manager v2.0</span></div>
+            <h1 class="hero-title"><span class="hero-line">A Gestão Inteligente</span><span class="hero-line highlight">que seu Negócio Merece</span></h1>
+            <p class="hero-subtitle">Sistema completo para controlar vendas, estoque, finanças e lucros de qualquer tipo de empresa. Simples, poderoso e acessível.</p>
+            <div class="hero-actions">
+                <a href="#demo" class="btn-hero-primary"><i class="fas fa-play-circle"></i> Ver Demonstração</a>
+                <a href="#pricing" class="btn-hero-secondary"><i class="fas fa-tags"></i> Ver Planos</a>
             </div>
-            <div class="hero-image">
-                <div class="dashboard-mock">
-                    <div class="mock-card"><i class="fas fa-chart-line"></i> <span>Receitas</span> <strong>R$ 15.240</strong></div>
-                    <div class="mock-card"><i class="fas fa-chart-line"></i> <span>Despesas</span> <strong>R$ 8.320</strong></div>
-                    <div class="mock-card"><i class="fas fa-wallet"></i> <span>Saldo</span> <strong>R$ 6.920</strong></div>
-                </div>
+            <div class="hero-stats">
+                <div class="stat-item"><span class="stat-number">+200</span><span class="stat-label">Empresas atendidas</span></div>
+                <div class="stat-item"><span class="stat-number">99.9%</span><span class="stat-label">Disponibilidade</span></div>
+                <div class="stat-item"><span class="stat-number">24/7</span><span class="stat-label">Suporte</span></div>
+                <div class="stat-item"><span class="stat-number">R$0</span><span class="stat-label">Instalação</span></div>
             </div>
         </div>
+        <div class="hero-visual">
+            <div class="floating-screens">
+                <div class="screen screen-1"><div class="screen-content" style="background: linear-gradient(135deg, #0000FF, #3366FF);"></div></div>
+                <div class="screen screen-2"><div class="screen-content" style="background: linear-gradient(135deg, #3366FF, #0000CC);"></div></div>
+                <div class="screen screen-3"><div class="screen-content" style="background: linear-gradient(135deg, #0000CC, #0000FF);"></div></div>
+            </div>
+        </div>
+        <div class="scroll-indicator"><span>Descubra mais</span><i class="fas fa-chevron-down"></i></div>
     </section>
 
-    <!-- SOLUÇÕES -->
-    <section id="solucoes" class="section-solucoes">
+    <!-- Soluções -->
+    <section id="solutions" class="section-solutions">
         <div class="container">
             <div class="section-header">
-                <span class="tag">SOLUÇÕES COMPLETAS</span>
-                <h2>Um Sistema para Cada Necessidade</h2>
-                <p>Escolha o sistema perfeito para o seu tipo de negócio</p>
+                <span class="section-label">SOLUÇÕES COMPLETAS</span>
+                <h2 class="section-title">Um Sistema para Cada Necessidade</h2>
+                <p class="section-description">Escolha o sistema perfeito para o seu tipo de negócio</p>
             </div>
-            <div class="solucoes-grid">
-                <div class="card-solucao">
-                    <div class="card-icon"><i class="fas fa-store-alt"></i></div>
+            <div class="solutions-grid">
+                <!-- Comércio+ Manager -->
+                <div class="solution-card" id="comercio-plus">
+                    <div class="solution-icon"><i class="fas fa-store-alt"></i></div>
                     <h3>Comércio+ Manager</h3>
                     <p>Gestão completa para lojas, varejo e atacado.</p>
-                    <ul>
+                    <ul class="solution-features">
                         <li><i class="fas fa-check-circle"></i> Controle de Estoque Avançado</li>
                         <li><i class="fas fa-check-circle"></i> Vendas com Lucro Inteligente</li>
                         <li><i class="fas fa-check-circle"></i> Gestão Financeira Completa</li>
                     </ul>
-                    <a href="login.html" class="btn-card">Acessar Sistema</a>
+                    <a href="login.html" class="btn-solution">Acessar Sistema</a>
                 </div>
-                <div class="card-solucao coming-soon">
-                    <div class="card-icon"><i class="fas fa-industry"></i></div>
-                    <span class="badge-soon">EM BREVE</span>
+
+                <!-- Indústria+ Pro (em breve) -->
+                <div class="solution-card coming-soon">
+                    <div class="solution-icon"><i class="fas fa-industry"></i></div>
+                    <span class="coming-soon-badge">EM BREVE</span>
                     <h3>Indústria+ Pro</h3>
                     <p>Controle de produção, qualidade e logística.</p>
-                    <button disabled>Avise-me</button>
+                    <button class="btn-solution" disabled>Avise-me</button>
                 </div>
-                <div class="card-solucao coming-soon">
-                    <div class="card-icon"><i class="fas fa-utensils"></i></div>
-                    <span class="badge-soon">EM BREVE</span>
+
+                <!-- Restaurante+ (em breve) -->
+                <div class="solution-card coming-soon">
+                    <div class="solution-icon"><i class="fas fa-utensils"></i></div>
+                    <span class="coming-soon-badge">EM BREVE</span>
                     <h3>Restaurante+</h3>
                     <p>Comandas digitais, delivery integrado.</p>
-                    <button disabled>Avise-me</button>
+                    <button class="btn-solution" disabled>Avise-me</button>
+                </div>
+
+                <!-- NOVO: Entregas VIP -->
+                <div class="solution-card" id="entregas-vip">
+                    <div class="solution-icon"><i class="fas fa-truck"></i></div>
+                    <h3>Entregas VIP</h3>
+                    <p>Gestão completa de entregadores, rotas e pedidos.</p>
+                    <ul class="solution-features">
+                        <li><i class="fas fa-check-circle"></i> Cadastro de entregadores</li>
+                        <li><i class="fas fa-check-circle"></i> Rastreamento de entregas</li>
+                        <li><i class="fas fa-check-circle"></i> Cálculo automático de comissões</li>
+                        <li><i class="fas fa-check-circle"></i> Relatórios de performance</li>
+                    </ul>
+                    <a href="login-entrega.html" class="btn-solution">Acessar Sistema</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- RECURSOS (TABS) -->
-    <section id="recursos" class="section-recursos">
+    <!-- Recursos (tabs) -->
+    <section id="features" class="section-features">
         <div class="container">
             <div class="section-header">
-                <span class="tag">RECURSOS AVANÇADOS</span>
-                <h2>Tudo que Sua Empresa Precisa</h2>
+                <span class="section-label">RECURSOS AVANÇADOS</span>
+                <h2 class="section-title">Tudo que Sua Empresa Precisa</h2>
             </div>
-            <div class="tabs-wrapper">
+            <div class="features-tabs">
                 <div class="tabs-header">
-                    <button class="tab-btn active" data-tab="financeiro"><i class="fas fa-chart-line"></i> Financeiro</button>
-                    <button class="tab-btn" data-tab="vendas"><i class="fas fa-cash-register"></i> Vendas & PDV</button>
-                    <button class="tab-btn" data-tab="estoque"><i class="fas fa-boxes"></i> Estoque</button>
+                    <button class="tab-button active" data-tab="financeiro"><i class="fas fa-chart-line"></i> Financeiro Inteligente</button>
+                    <button class="tab-button" data-tab="vendas"><i class="fas fa-cash-register"></i> Vendas & PDV</button>
+                    <button class="tab-button" data-tab="estoque"><i class="fas fa-boxes"></i> Controle de Estoque</button>
                 </div>
                 <div class="tabs-content">
                     <div class="tab-pane active" id="financeiro">
-                        <div class="feature-grid">
+                        <div class="feature-detail">
                             <div class="feature-text">
                                 <h3>Cálculo Inteligente de Lucro</h3>
                                 <p>Nosso sistema separa automaticamente reinvestimento, impostos e custos operacionais, mostrando o lucro real.</p>
-                                <ul>
-                                    <li><strong>Reinvestimento:</strong> Para recomprar produtos</li>
-                                    <li><strong>Impostos:</strong> Automático por venda</li>
-                                    <li><strong>Lucro Real:</strong> O que sobra para você</li>
+                                <ul class="feature-list">
+                                    <li><strong>Reinvestimento:</strong><span>Para recomprar produtos</span></li>
+                                    <li><strong>Impostos:</strong><span>Automático por venda</span></li>
+                                    <li><strong>Lucro Real:</strong><span>O que sobra para você</span></li>
                                 </ul>
                             </div>
-                            <div class="feature-chart">
-                                <div class="bar-chart">
-                                    <div style="height: 60%"></div>
-                                    <div style="height: 80%"></div>
-                                    <div style="height: 45%"></div>
-                                    <div style="height: 90%"></div>
-                                </div>
-                            </div>
+                            <div class="feature-chart"><div class="bar-chart"><div style="height:60%"></div><div style="height:80%"></div><div style="height:45%"></div><div style="height:90%"></div></div></div>
                         </div>
                     </div>
                     <div class="tab-pane" id="vendas">
-                        <div class="feature-grid">
+                        <div class="feature-detail">
                             <div class="feature-text">
                                 <h3>Sistema de Vendas Completo</h3>
                                 <p>PDV integrado, múltiplas formas de pagamento, nota fiscal eletrônica e controle de comissões.</p>
                             </div>
-                            <div class="feature-chart">
-                                <div class="sales-mock">
-                                    <div>Vinho Premium <span>R$ 140,00</span></div>
-                                    <div>Queijo Especial <span>R$ 55,00</span></div>
-                                    <div class="total">Total: R$ 195,00</div>
-                                </div>
-                            </div>
+                            <div class="feature-chart"><div class="sales-mock"><div>Vinho Premium <span>R$ 140,00</span></div><div>Queijo Especial <span>R$ 55,00</span></div><div class="total">Total: R$ 195,00</div></div></div>
                         </div>
                     </div>
                     <div class="tab-pane" id="estoque">
-                        <div class="feature-grid">
+                        <div class="feature-detail">
                             <div class="feature-text">
                                 <h3>Controle de Estoque</h3>
                                 <p>Alertas de reposição, inventário periódico, código de barras e relatórios de giro.</p>
@@ -180,15 +188,15 @@
         </div>
     </section>
 
-    <!-- PREÇOS -->
-    <section id="precos" class="section-precos">
+    <!-- Preços -->
+    <section id="pricing" class="section-pricing">
         <div class="container">
             <div class="section-header">
-                <span class="tag">PLANOS</span>
-                <h2>Escolha o plano ideal</h2>
+                <span class="section-label">PLANOS</span>
+                <h2 class="section-title">Escolha o plano ideal</h2>
             </div>
-            <div class="precos-grid">
-                <div class="card-preco">
+            <div class="pricing-grid">
+                <div class="pricing-card">
                     <h3>Familiar / Pessoal</h3>
                     <div class="price">R$ 14,99 <span>/mês</span></div>
                     <ul>
@@ -198,7 +206,7 @@
                     </ul>
                     <a href="register.html?plan=familiar" class="btn-primary">Teste grátis 30 dias</a>
                 </div>
-                <div class="card-preco destaque">
+                <div class="pricing-card featured">
                     <div class="popular">Mais Popular</div>
                     <h3>Empresarial</h3>
                     <div class="price">R$ 350 <span>/mês</span></div>
@@ -214,10 +222,10 @@
         </div>
     </section>
 
-    <!-- CONTATO -->
-    <section id="contato" class="section-contato">
-        <div class="container contato-wrapper">
-            <div class="contato-texto">
+    <!-- Contato -->
+    <section id="contact" class="section-contact">
+        <div class="container">
+            <div class="contact-box">
                 <h2>Pronto para transformar sua gestão?</h2>
                 <p>Comece seu teste gratuito de 30 dias. Sem compromisso, cancele quando quiser.</p>
                 <a href="register.html" class="btn-primary btn-large">Criar Conta Grátis</a>
@@ -225,18 +233,15 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 JCSystem. Todos os direitos reservados.</p>
-            <div class="footer-links">
-                <a href="#">Privacidade</a>
-                <a href="#">Termos</a>
-                <a href="#">Suporte</a>
-            </div>
+            <div class="footer-links"><a href="#">Privacidade</a><a href="#">Termos</a><a href="#">Suporte</a></div>
         </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
 </html>
+
